@@ -16,6 +16,8 @@ public class Account {
 		@Id
 		@GeneratedValue(strategy = GenerationType.IDENTITY)
 		private Integer id;
+		@Column(name ="account_id")
+		private Integer accountId;
 		private String name;
 		private String tel;
 		private String email;
@@ -32,10 +34,12 @@ public class Account {
 		@Column(name="delete_flg")
 		private Character deleteFlg;
 		
+		
 		public Account() {
 		}
 
-		public Account(String name, String tel, String email, String password, Integer type, Character deleteFlg) {
+		public Account(Integer accountId,String name, String tel, String email, String password, Integer type, Character deleteFlg) {
+			this.accountId= accountId;
 			this.name = name;
 			this.tel = tel;
 			this.email = email;
@@ -110,6 +114,14 @@ public class Account {
 
 		public void setCreateId(Integer createId) {
 			this.createId = createId;
+		}
+
+		public Integer getAccountId() {
+			return accountId;
+		}
+
+		public void setAccountId(Integer accountId) {
+			this.accountId = accountId;
 		}
 
 		public Integer getUpdateId() {

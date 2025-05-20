@@ -22,4 +22,35 @@ public class Cart {
 	public List<Item> getItems() {
 		return items;
 	}
+
+	public void add(Item newItem) {
+	    Item existsItem = null;
+
+	    for (Item item : items) {
+	        if (item.getId() != null && newItem.getId() != null && item.getId().equals(newItem.getId())) {
+	            existsItem = item;
+	            break;
+	        }
+	    }
+
+	    if (existsItem == null) {
+	    	if (newItem.getQuantity() <= 0) {
+	             newItem.setQuantity(1);
+	        }
+	        items.add(newItem);
+	    } else {
+	        existsItem.setQuantity(existsItem.getQuantity() + newItem.getQuantity());
+	    }
+	}
+	
+	public void delete(int itemId) {
+		//現在のカートの商品から同じIDを探す
+		for (Item item : items) {
+			//対象の商品が見つかったら削除
+			if (item.getId() == itemId) {
+				items.remove(item);
+				break;
+			}
+		}
+	}
 }
