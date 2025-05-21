@@ -50,4 +50,28 @@ public class CartController {
 		//「/cart」にリダイレクト
 		return "redirect:/cart";
 	}
+	
+	@PostMapping("/cart/increment")
+	public String incrementQuantity(@RequestParam(name="itemId") int itemId) {
+		// カートにある商品の数量を1増やす
+		for (Item item : cart.getItems()) {
+			if (item.getId() == itemId) {
+				item.setQuantity(item.getQuantity() + 1);
+				break;
+			}
+		}
+		return "redirect:/cart";
+	}
+	
+	@PostMapping("/cart/decrement")
+	public String decrementQuantity(@RequestParam(name="itemId") int itemId) {
+		// カートにある商品の数量を1減らす
+		for (Item item : cart.getItems()) {
+			if (item.getId() == itemId && item.getQuantity() > 1) {
+				item.setQuantity(item.getQuantity() - 1);
+				break;
+			}
+		}
+		return "redirect:/cart";
+	}
 }

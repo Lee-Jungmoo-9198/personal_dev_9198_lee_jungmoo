@@ -1,11 +1,20 @@
-<header>
-	<div class="container-fluid bg-dark text-white p-3">
-			<h4 class="d-inline"><a href="/" style="color: white;">サンプルショッピング</a></h4>
-			<div class="float-end">
-				<span>さんがログイン中</span>
-				<a href="/logout" class="text-white text-decoration-underline">ログアウト</a>
-				<a href="/cart" class="text-white text-decoration-underline">カートを見る</a>
+<header class="bg-dark text-white p-3">
+	<div class="container">
+		<div class="d-flex justify-content-between align-items-center">
+			<h1 class="h4 mb-0"><a href="/items" class="text-white text-decoration-none">サンプルショッピング</a></h1>
+			<div>
+				
+				<div th:if="${session.accountS != null && session.accountS.loggedIn}">
+					<a th:href="@{/mypage}" class="me-2 text-white text-decoration-none" th:text="${session.accountS.name} + '様'"></a>
+					<a href="/logout" class="btn btn-light">ログアウト</a>
+					<a href="/cart" class="btn btn-outline-light me-2">カート</a>
+				</div>
+				<div th:unless="${session.accountS != null && session.accountS.loggedIn}">
+					<a href="/login" class="btn btn-light">ログイン</a>
+					<a href="/cart" class="btn btn-outline-light me-2">カート</a>
+				</div>
+				
 			</div>
 		</div>
+	</div>
 </header>
-

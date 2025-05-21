@@ -53,4 +53,17 @@ public class Cart {
 			}
 		}
 	}
+	//カートをクリア
+		public void clear() {
+			//itemsを空にする
+			items = new ArrayList<>();
+		}
+
+		public int getTotalPrice() {
+			int total = 0;
+			for (Item item : items) {
+				total += item.getPrice() * item.getQuantity();
+			}
+			return total;
+		}
 }

@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "order_details")
-public class Order_details {
+public class OrderDetail {
 	//	create table public.order_details (
 	//			  id serial not null
 	//			  , orders_id integer
@@ -38,10 +38,10 @@ public class Order_details {
 	private Integer quantity;
 
 	@Column(name = "create_date")
-	private LocalDate createDate;
+	private Timestamp createDate;
 
 	@Column(name = "update_date")
-	private LocalDate updateDate;
+	private Timestamp updateDate;
 
 	@Column(name = "create_id")
 	private Integer createId;
@@ -53,12 +53,19 @@ public class Order_details {
 	private char deleteFlg;
 
 	//デフォルトコンストラクタ
-	public Order_details() {
+	public OrderDetail() {
+		
+	}
+	public OrderDetail(Integer ordersId, Integer itemsId, Integer quantity) {
+		
+		this.ordersId = ordersId;
+		this.itemsId = itemsId;
+		this.quantity = quantity;
 	}
 
 	//コンストラクタ(主キー除く)
-	public Order_details(Integer ordersId, Integer itemsId, Integer quantity, LocalDate createDate,
-			LocalDate updateDate, Integer createId, Integer updateId, char deleteFlg) {
+	public OrderDetail(Integer ordersId, Integer itemsId, Integer quantity, Timestamp createDate,
+			Timestamp updateDate, Integer createId, Integer updateId, char deleteFlg) {
 		this.ordersId = ordersId;
 		this.itemsId = itemsId;
 		this.quantity = quantity;
@@ -101,19 +108,19 @@ public class Order_details {
 		this.quantity = quantity;
 	}
 
-	public LocalDate getCreateDate() {
+	public Timestamp getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(LocalDate createDate) {
+	public void setCreateDate(Timestamp createDate) {
 		this.createDate = createDate;
 	}
 
-	public LocalDate getUpdateDate() {
+	public Timestamp getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(LocalDate updateDate) {
+	public void setUpdateDate(Timestamp updateDate) {
 		this.updateDate = updateDate;
 	}
 

@@ -34,7 +34,14 @@ public class Address {
 	@Column(name="delete_flg")
 	private Character deleteFlg;
 	
-	public Address() {
+	public Address(){
+		
+	}
+	public Address(String postalCode, Integer perfectureId, String street, String building) {
+		this.postalCode = postalCode;
+		this.perfectureId = perfectureId;
+		this.street = street;
+		this.building = building;
 	}
 
 	public Address(String name, String postalCode, Integer perfectureId, String street, String building) {

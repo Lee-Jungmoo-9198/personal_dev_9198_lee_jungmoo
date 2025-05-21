@@ -14,7 +14,7 @@ public class AccountS {
     private String email;
     private String password;
     
-    private boolean isLoggedIn = false;
+    private boolean isLoggedIn ;
 
     public AccountS() {
     }

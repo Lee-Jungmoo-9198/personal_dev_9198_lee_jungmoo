@@ -1,23 +1,26 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
-	<title>サンプルショッピング</title>
-	
+	<title>サンプルショッピング - 注文完了</title>
+
 </head>
 
 <body>
 	<div class="container">
-		<h1>ありがとうございました！</h1>
-		<p>お客様の注文番号は</p>
-		<div class="order-number">1</div>
-		<div class="mt-4">
-			<button class="btn btn-primary">注文情報で新規登録する</button>
-			<button class="btn btn-secondary">ホームページに戻る</button>
+		<h1 class="text-center">ありがとうございました！</h1>
+
+        <p th:if="${message}" class="text-center" th:text="${message}">注文が完了しました！</p>
+
+		<p class="text-center">お客様の注文番号は</p>
+		<div class="order-number text-center" th:text="${orderId}">1</div>
+
+		<div class="mt-4 text-center">
+			<a href="/" class="btn btn-secondary">ホームページに戻る</a>
 		</div>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

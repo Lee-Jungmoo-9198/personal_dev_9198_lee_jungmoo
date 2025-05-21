@@ -1,84 +1,111 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
-	<title>サンプルショッピング</title>
+	<title>サンプルショッピング - ご注文確認</title>
 </head>
 
 <body>
 	<div class="container">
 		<h1 class="text-center">サンプルショッピング</h1>
 		<div class="cart-box mx-auto">
-			<h2 class="text-center">カート</h2>
-			<div class="product-item d-flex justify-content-between align-items-center">
-				<img src="https://via.placeholder.com/100" alt="商品画像" class="confirm-product-image">
-				<div>
-					<h5>商品名</h5>
-					<p>商品詳細</p>
-				</div>
-				<div class="d-flex align-items-center">
-					<button class="btn btn-secondary">-</button>
-					<span class="mx-2">1</span>
-					<button class="btn btn-secondary">+</button>
-					<button class="btn btn-danger ml-2">削除</button>
-				</div>
-				<span>¥値段</span>
+			<h2 class="text-center">カート内容確認</h2>
+
+			<div th:if="${cart.items.empty}" class="alert alert-info text-center" role="alert">
+				カートが空です。
 			</div>
-			<div class="product-item d-flex justify-content-between align-items-center mt-3">
-				<img src="https://via.placeholder.com/100" alt="商品画像" class="confirm-product-image">
+
+			<div th:each="item : ${cart.items}" class="product-item d-flex justify-content-between align-items-center mt-3">
+				<img th:if="${item.img != null and !item.img.isEmpty()}" th:src="@{/img/{imgFileName}(imgFileName=${item.img})}" alt="商品画像"
+					style="max-width: 100%; max-height: 80px; object-fit: contain;">
+				<span th:unless="${item.img != null and !item.img.isEmpty()}">画像なし</span>
+
 				<div>
-					<h5>商品名</h5>
-					<p>商品詳細</p>
+					<h5 th:text="${item.name}">商品名</h5>
+					<p th:text="${item.detail}">商品詳細</p>
 				</div>
+
 				<div class="d-flex align-items-center">
-					<button class="btn btn-secondary">-</button>
-					<span class="mx-2">1</span>
-					<button class="btn btn-secondary">+</button>
-					<button class="btn btn-danger ml-2">削除</button>
+					<span class="mx-2" th:text="${item.quantity}">1</span> 個
 				</div>
-				<span>¥値段</span>
+
+				<span th:text="'¥' + ${item.price * item.quantity}">¥値段</span>
 			</div>
+
 			<div class="text-right mt-4">
-				<h4>¥合計</h4>
+				<h4 th:text="'合計: ¥' + ${totalPrice}">¥合計</h4>
 			</div>
+
 			<h2 class="mt-5">お客様情報確認</h2>
-			<table class="table">
+
+			<!-- ログインユーザー用 -->
+			<table class="table" th:if="${loggedInAccount != null}">
 				<tbody>
 					<tr>
 						<th scope="row">名前</th>
-						<td>太郎</td>
+						<td th:text="${loggedInAccount.name}">太郎</td>
 					</tr>
 					<tr>
 						<th scope="row">住所</th>
-						<td>〒222-3333 神奈川県川崎市 西区北幸2-5-15 プレミア横浜西口ビル2F</td>
+						<td th:text="${loggedInAccount.address}">〒222-3333 神奈川県川崎市...</td>
 					</tr>
 					<tr>
 						<th scope="row">電話番号</th>
-						<td>090-1234-5678</td>
+						<td th:text="${loggedInAccount.tel}">090-1234-5678</td>
 					</tr>
 					<tr>
 						<th scope="row">e-mail</th>
-						<td>aaa@sample.com</td>
-					</tr>
-					<tr>
-						<th scope="row">支払い方法</th>
-						<td>クレジットカード</td>
-					</tr>
-					<tr>
-						<th scope="row">番号</th>
-						<td>**********09</td>
+						<td th:text="${loggedInAccount.email}">aaa@sample.com</td>
 					</tr>
 				</tbody>
 			</table>
-			<div class="text-center">
-				<button class="btn btn-primary">注文する</button>
-			</div>
+
+			<!-- ゲスト用 -->
+			<table class="table" th:if="${loggedInAccount == null}">
+				<tbody>
+					<tr>
+						<th scope="row">名前</th>
+						<td th:text="${customerName}">ゲスト名</td>
+					</tr>
+					<tr>
+						<th scope="row">住所</th>
+						<td th:text="'〒' + ${customerPostalCode} + ' ' + ${customerPrefectureId} + ' ' + ${customerStreet} + ' ' + ${customerBuilding}">住所</td>
+					</tr>
+					<tr>
+						<th scope="row">電話番号</th>
+						<td th:text="${customerTel}">電話</td>
+					</tr>
+					<tr>
+						<th scope="row">e-mail</th>
+						<td th:text="${customerEmail}">メール</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<form th:action="@{/order/complete}" method="post">
+				<!-- ゲスト情報 hidden -->
+				<input type="hidden" name="name" th:value="${customerName}">
+				<input type="hidden" name="tel" th:value="${customerTel}">
+				<input type="hidden" name="email" th:value="${customerEmail}">
+				<input type="hidden" name="postal_code" th:value="${customerPostalCode}">
+				<input type="hidden" name="prefecture_id" th:value="${customerPrefectureId}">
+				<input type="hidden" name="street" th:value="${customerStreet}">
+				<input type="hidden" name="building" th:value="${customerBuilding}">
+				<input type="hidden" name="paymentMethod" th:value="${paymentMethod}">
+				<input type="hidden" name="creditCardId" th:value="${creditCardId}">
+
+				<div class="text-center">
+					<a th:href="@{/order/info}" class="btn btn-secondary">支払い方法選択へ戻る</a>
+					<button type="submit" class="btn btn-primary">注文を確定する</button>
+				</div>
+			</form>
 		</div>
 	</div>
+
 	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -58,12 +58,20 @@ public class AccountController {
 			Account customer = accountOpt.get();
 
 			if (customer.getPassword().equals(password)) {
-
-				if (accountS != null) {
-
-				} else {
-
+				
+				if (accountS == null) {
+					accountS = new AccountS();
 				}
+				
+				accountS.setAccountId(customer.getAccountId());
+				accountS.setName(customer.getName());
+				accountS.setAccountType(customer.getType());
+				accountS.setEmail(customer.getEmail());
+				accountS.setTel(customer.getTel());
+				accountS.setLoggedIn(true);
+				
+				
+				session.setAttribute("accountS", accountS);
 
 				return "redirect:/items";
 			} else {

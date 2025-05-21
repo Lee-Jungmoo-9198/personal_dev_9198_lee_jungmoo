@@ -76,7 +76,7 @@
 
 			<h5><span th:text="'￥' + ${#aggregates.sum(cart.items.![price * quantity])}">￥合計</span></h5>
 
-			<form th:action="@{/order}" method="post">
+			<form action="/order" method="get">
 				<button type="submit" class="btn btn-dark mt-2">注文する</button>
 			</form>
 		</div>
