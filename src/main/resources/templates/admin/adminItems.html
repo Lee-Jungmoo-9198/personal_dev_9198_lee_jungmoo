@@ -1,10 +1,57 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily PicK(管理用)</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/adminStyle.css">
+    <style>        
+        td form {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-
+    <header th:replace="admin/adminheader"></header>
+    <div class="container">
+        <h2>商品一覧</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>カテゴリ</th> 
+                    <th>商品名</th>
+                    <th>価格</th>
+                    <th>個数</th>
+                    <th>商品詳細</th>
+                    <th>作業</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item, items : ${itemList}">
+                    <td th:text="${items.index + 1}"></td>                    
+                    <td th:text="|${item.categoryId} (${categoryNameMap.get(item.categoryId) ?: '不明'})|">1 (カテゴリ名)</td>
+                    <td th:text="${item.name}"></td>
+                    <td th:text="${item.price}"></td>                    
+                    <td th:text="${stockMap.get(item.id)} ?: '0'">0</td>
+                    <td th:text="${item.detail}"></td>
+                    <td class="d-flex justify-content-around align-items-center">
+                        <a th:href="|/admin/items/${item.id}/edit|" class="btn btn-primary btn-sm">更新</a>
+                        <a th:href="|/admin/items/${item.id}/stock|" class="btn btn-warning btn-sm">在庫管理</a>
+                        <form th:action="|/admin/items/${item.id}/delete|" method="post"
+                              onsubmit="return confirm('本当に削除しますか？');" class="d-inline-block">
+                            <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="/admin/items/add"><button class="btn btn-primary">新規登録</button></a>
+    </div>
+	
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

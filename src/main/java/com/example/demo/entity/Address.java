@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,49 +9,71 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-
 @Entity
-@Table(name="address")
+@Table(name = "address")
 public class Address {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+
 	private String name;
-	@Column(name="postal_code")
+
+	@Column(name = "account_id")
+	private Integer accountId;
+
+	@Column(name = "postal_code")
 	private String postalCode;
-	@Column(name="perfecture_id")
-	private Integer perfectureId;
+
+	@Column(name = "perfecture_id")
+	private Integer prefectureId;
+
 	private String street;
 	private String building;
-	@Column(name="create_date")
-	private Timestamp createDate;
-	@Column(name="update_date")
-	private Timestamp updateDate;
-	@Column(name="create_id")
+	private String type;
+
+	@Column(name = "create_date")
+	private LocalDateTime createDate;
+
+	@Column(name = "update_date")
+	private LocalDateTime updateDate;
+
+	@Column(name = "create_id")
 	private Integer createId;
-	@Column(name="update_id")
+
+	@Column(name = "update_id")
 	private Integer updateId;
-	@Column(name="delete_flg")
+
+	@Column(name = "delete_flg")
 	private Character deleteFlg;
-	
-	public Address(){
-		
+
+	public Address() {
 	}
-	public Address(String postalCode, Integer perfectureId, String street, String building) {
+
+	public Address(String postalCode, Integer prefectureId, String street, String building) {
 		this.postalCode = postalCode;
-		this.perfectureId = perfectureId;
+		this.prefectureId = prefectureId;
 		this.street = street;
 		this.building = building;
 	}
 
-	public Address(String name, String postalCode, Integer perfectureId, String street, String building) {
+	public Address(String name, String postalCode, Integer prefectureId, String street, String building) {
 		this.name = name;
 		this.postalCode = postalCode;
-		this.perfectureId = perfectureId;
+		this.prefectureId = prefectureId;
 		this.street = street;
 		this.building = building;
 	}
-	
+
+	public Address(String type, Integer accountId, String postalCode, Integer prefectureId, String street,
+			String building) {
+		this.type = type;
+		this.accountId = accountId;
+		this.postalCode = postalCode;
+		this.prefectureId = prefectureId;
+		this.street = street;
+		this.building = building;
+	}
+
 	public Integer getId() {
 		return id;
 	}
@@ -64,6 +86,14 @@ public class Address {
 		this.name = name;
 	}
 
+	public Integer getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(Integer accountId) {
+		this.accountId = accountId;
+	}
+
 	public String getPostalCode() {
 		return postalCode;
 	}
@@ -72,12 +102,12 @@ public class Address {
 		this.postalCode = postalCode;
 	}
 
-	public Integer getPerfectureId() {
-		return perfectureId;
+	public Integer getPrefectureId() {
+		return prefectureId;
 	}
 
-	public void setPerfectureId(Integer perfectureId) {
-		this.perfectureId = perfectureId;
+	public void setPrefectureId(Integer prefectureId) {
+		this.prefectureId = prefectureId;
 	}
 
 	public String getStreet() {
@@ -96,19 +126,27 @@ public class Address {
 		this.building = building;
 	}
 
-	public Timestamp getCreateDate() {
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(Timestamp createDate) {
+	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
 	}
 
-	public Timestamp getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Timestamp updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 
@@ -135,6 +173,4 @@ public class Address {
 	public void setDeleteFlg(Character deleteFlg) {
 		this.deleteFlg = deleteFlg;
 	}
-
-	
 }

@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 //create table public.items (
+
 //		  id serial not null
 //		  , category_id integer
 //		  , name text not null
@@ -15,7 +16,6 @@ package com.example.demo.entity;
 //		  , primary key (id)
 //		);
 
-
 import java.sql.Timestamp;
 
 import jakarta.persistence.Column;
@@ -27,38 +27,38 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
-@Table(name="items")
+@Table(name = "items")
 public class Item {
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	@Column(name = "category_id")
 	private Integer categoryId;
-	
+
 	private String name;
 	private Integer price;
 	private String detail;
 	private String img;
 
-	@Column(name="create_date")
+	@Column(name = "create_date")
 	private Timestamp createDate;
-	
-	@Column(name="update_date")
+
+	@Column(name = "update_date")
 	private Timestamp updateDate;
-	
-	@Column(name="create_id")
+
+	@Column(name = "create_id")
 	private Integer createId;
-	
-	@Column(name="update_id")
+
+	@Column(name = "update_id")
 	private Integer updateId;
-	
-	@Column(name="delete_flg")
+
+	@Column(name = "delete_flg")
 	private Character deleteFlg;
-	
+
 	@Transient
 	private Integer quantity;
-	
+
 	public Item() {
 	}
 
@@ -165,9 +165,5 @@ public class Item {
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
 	}
-	
-	
 
-	
-	
 }

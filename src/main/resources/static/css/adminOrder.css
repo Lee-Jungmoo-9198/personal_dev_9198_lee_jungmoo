@@ -1,0 +1,45 @@
+body {
+            background-color: #f8f9fa;
+        }
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 10px;
+            text-align: right;
+        }
+        .container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .section-title {
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            color: #007bff;
+        }
+        .product-image {
+            width: 80px; /* 이미지 크기 조정 */
+            height: auto;
+            margin-right: 15px;
+        }
+        .product-image img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+        .table-hover tbody tr:hover {
+             background-color: #f1f1f1;
+        }
+         .text-muted strong {
+            color: #6c757d; 
+        }
+        
+        .card-info {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }

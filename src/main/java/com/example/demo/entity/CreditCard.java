@@ -10,35 +10,35 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="credit_cards")
+@Table(name = "credit_cards")
 public class CreditCard {
-	
+
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	@Column(name="account_id")
+	@Column(name = "account_id")
 	private Integer accountId;
 	private String number;
-	@Column(name="expiration_yy")
+	@Column(name = "expiration_yy")
 	private String expirationYy;
-	@Column(name="expiration_mm")
+	@Column(name = "expiration_mm")
 	private String expirationMm;
 	private String name;
 	private String cvc;
-	
-	@Column(name="create_date")
+
+	@Column(name = "create_date")
 	private Timestamp createDate;
-	@Column(name="update_date")
+	@Column(name = "update_date")
 	private Timestamp updateDate;
-	@Column(name="create_id")
+	@Column(name = "create_id")
 	private Integer createId;
-	@Column(name="update_id")
+	@Column(name = "update_id")
 	private Integer updateId;
-	@Column(name="delete_flg")
+	@Column(name = "delete_flg")
 	private Character deleteFlg;
-	
+
 	public CreditCard() {
-		
+
 	}
 
 	public CreditCard(Integer accountId, String number, String expirationYy, String expirationMm, String name,
@@ -142,7 +142,5 @@ public class CreditCard {
 	public Integer getId() {
 		return id;
 	}
-	
-	
-	
+
 }

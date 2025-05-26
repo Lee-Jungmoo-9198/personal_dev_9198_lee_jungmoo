@@ -19,12 +19,11 @@ public class PaymentType {
 
 	private String name;
 
-    
-
 	@Column(name = "create_date")
-	private LocalDate createDate;
 
+	private LocalDate createDate;
 	@Column(name = "update_date")
+
 	private LocalDate updateDate;
 
 	@Column(name = "create_id")
@@ -36,46 +35,40 @@ public class PaymentType {
 	@Column(name = "delete_flg")
 	private Character deleteFlg;
 
-
 	public PaymentType() {
 	}
 
-	
-
-	public PaymentType(Integer id, String name, String value) {
+	public PaymentType(Integer id, String name) {
 		this.id = id;
 		this.name = name;
-		
 	}
 
-
-
-	public PaymentType(String name, String value) {
+	public PaymentType(String name) {
 		this.name = name;
-        
 	}
-
 
 	public Integer getId() {
 		return id;
 	}
 
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
 
 	public String getName() {
 		return name;
 	}
 
-
 	public void setName(String name) {
 		this.name = name;
 	}
 
-    
+	public LocalDate getCreateDate() {
+		return createDate;
+	}
 
+	public void setCreateDate(LocalDate createDate) {
+		this.createDate = createDate;
+	}
 
 }

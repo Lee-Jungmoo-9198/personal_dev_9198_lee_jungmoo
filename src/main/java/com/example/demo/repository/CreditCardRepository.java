@@ -11,4 +11,6 @@ import com.example.demo.entity.CreditCard;
 public interface CreditCardRepository extends JpaRepository<CreditCard, Integer> {
     @Query("SELECT c FROM CreditCard c WHERE c.accountId = :accountId AND (c.deleteFlg IS NULL OR c.deleteFlg <> '1')")
     List<CreditCard> findByAccountId(@Param("accountId") Integer accountId);
+
+	void deleteByAccountId(Integer accountId);
 }

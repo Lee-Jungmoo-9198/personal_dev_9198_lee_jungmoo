@@ -1,57 +1,108 @@
 <!DOCTYPE html>
-<html lang="ja">
-
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>サンプルショッピング - 注文詳細</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+	<meta charset="UTF-8">
+	<title>Daily PicK - 注文詳細</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 
 <body class="bg-light">
+	<header th:replace="header"></header>
 
-    <div class="container-fluid bg-dark text-white p-3">
-        <h4 class="d-inline">サンプルショッピング</h4>
-        <div class="float-end">
-            <span th:text="${loggedInAccount.name} + 'さんがログイン中'">ユーザーさん、ログイン中です</span>
-            <a href="#" class="text-white text-decoration-underline">ログアウト</a>
-            <a href="#" class="text-white text-decoration-underline">カートを見る</a>
-        </div>
-    </div>
+	<main>
+		<div class="container mt-4">
+			<div class="row">
+				<div class="col-12">
+					<h2 class="text-center mb-4">注文詳細</h2>
+				</div>
+			</div>
 
-    <div class="container mt-4 bg-white p-4">
-        <h5>注文詳細</h5>
-        <p>注文番号: <span th:text="${order.orderNumber}">1</span></p>
-        <p>クレジットカード: <span th:text="${order.creditCard}">**********09</span></p>
+			<!-- 注文情報 -->
+			<div class="row mb-4">
+				<div class="col-12">
+					<div class="bg-white p-4 rounded shadow-sm">
+						<h4 class="mb-3">注文情報</h4>
+						
+						<div class="row">
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<th scope="row" class="text-muted">注文番号</th>
+										<td th:text="${order.id}">1</td>
+									</tr>
+									<tr th:if="${orderPaymentType != null}">
+										<th scope="row" class="text-muted">決済方法</th>
+										<td th:text="${orderPaymentType.name}">代金引換</td>
+									</tr>
+									<tr th:if="${orderCreditCard != null}">
+										<th scope="row" class="text-muted">クレジットカード</th>
+										<td th:text="${orderCreditCard.number}">**********09</td>
+									</tr>
+									<tr th:unless="${orderCreditCard != null or orderPaymentType != null}">
+										<th scope="row" class="text-muted">決済情報</th>
+										<td>なし</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-        <h5>商品情報</h5>
-        <div class="cart-item row align-items-center py-3 border-bottom" th:each="item : ${order.items}">
-            <div class="col-md-2">
-                <div class="product-image d-flex justify-content-center align-items-center">
-                    <img th:if="${item.img != null and !item.img.isEmpty()}"
-                         th:src="@{/img/{imgFileName}(imgFileName=${item.img})}" alt="商品画像"
-                         style="max-width: 100%; max-height: 80px; object-fit: contain;">
-                    <span th:unless="${item.img != null and !item.img.isEmpty()}">画像なし</span>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <strong th:text="${item.name}">商品名</strong><br>
-                <span th:text="'数量: ' + ${item.quantity}">数量</span>
-            </div>
-            <div class="col-md-3 text-end">
-                <span th:text="'￥' + ${#numbers.format(item.price * item.quantity, '#,###')}">￥値段</span>
-            </div>
-        </div>
+			<!-- 商品情報 -->
+			<div class="row mb-4">
+				<div class="col-12">
+					<div class="bg-white p-4 rounded shadow-sm">
+						<h4 class="mb-3">商品情報</h4>
 
-        <h5 class="mt-4">合計金額</h5>
-        <h6 th:text="'￥' + ${#numbers.format(order.totalAmount, '#,###')}">￥合計</h6>
+						<div th:each="detail : ${orderDetails}" class="row align-items-center py-3 border-bottom">
+							<div class="col-md-2">
+								<div class="product-image d-flex justify-content-center align-items-center">
+									<img th:if="${detail.item != null and detail.item.img != null and !detail.item.img.isEmpty()}"
+										th:src="@{/img/{imgFileName}(imgFileName=${detail.item.img})}" 
+										alt="商品画像"
+										style="max-width: 100%; max-height: 80px; object-fit: contain;">
+									<span th:unless="${detail.item != null and detail.item.img != null and !detail.item.img.isEmpty()}">画像なし</span>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<strong th:text="${detail.item != null ? detail.item.name : '商品情報なし'}">商品名</strong><br>
+								<span class="text-muted" th:text="'数量: ' + ${detail.quantity}">数量</span>
+							</div>
+							<div class="col-md-3 text-end">
+								<span th:with="priceVal=${detail.item?.price ?: 0}, qtyVal=${detail.quantity ?: 0}">
+									<span th:text="'￥' + (${priceVal * qtyVal})">￥値段</span>
+								</span>
+							</div>
+							<div class="col-md-3 text-end">
+								<form th:action="@{/cart/add}" method="post" class="d-inline">
+									<input type="hidden" name="itemId" th:value="${detail.item?.id}" />
+									<input type="hidden" name="quantity" th:value="${detail.quantity}" />
+									<button type="submit" class="btn btn-outline-primary btn-sm">再注文</button>
+								</form>
+							</div>
+						</div>
 
-        <div class="text-end mt-4">
-            <a href="/items" class="btn btn-secondary">商品一覧に戻る</a>
-            <button class="btn btn-primary">注文を確定する</button>
-        </div>
-    </div>
+						<div class="row mt-4">
+							<div class="col-md-9"></div>
+							<div class="col-md-3 text-end">
+								<h5 class="text-primary" th:text="'合計: ￥' + ${order.totalPrice}">￥合計</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
+			<!-- 戻るボタン -->
+			<div class="row">
+				<div class="col-12">
+					<div class="bg-white p-4 rounded shadow-sm text-center">
+						<a href="/mypage" class="btn btn-secondary">マイページに戻る</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
 </body>
-
 </html>

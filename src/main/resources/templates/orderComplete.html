@@ -3,29 +3,32 @@
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<title>Daily PicK - 注文完了</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
-	<title>サンプルショッピング - 注文完了</title>
-
 </head>
 
-<body>
-	<div class="container">
-		<h1 class="text-center">ありがとうございました！</h1>
+<body class="bg-light">
 
-        <p th:if="${message}" class="text-center" th:text="${message}">注文が完了しました！</p>
+	<header th:replace="header"></header>
 
-		<p class="text-center">お客様の注文番号は</p>
-		<div class="order-number text-center" th:text="${orderId}">1</div>
-
-		<div class="mt-4 text-center">
-			<a href="/" class="btn btn-secondary">ホームページに戻る</a>
+	<main>
+		<div class="container mt-4">
+			<div class="text-center">
+				<h1>ありがとうございました！</h1>
+				
+				<p th:if="${message}" th:text="${message}" class="mt-3">注文が完了しました！</p>
+				
+				<p class="mt-4">お客様の注文番号は</p>
+				<div class="order-number" th:text="${orderId}">1</div>
+				
+				<div class="mt-4">
+					<a href="/" class="btn btn-secondary">ホームページに戻る</a>
+				</div>
+			</div>
 		</div>
-	</div>
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	</main>
+
 </body>
 
 </html>

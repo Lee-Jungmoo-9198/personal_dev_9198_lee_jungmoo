@@ -6,81 +6,123 @@ import org.springframework.web.context.annotation.SessionScope;
 @Component
 @SessionScope
 public class AccountS {
-
-    private Integer accountId;
-    private String name;
-    private Integer accountType; 
-    private String tel;
-    private String email;
-    private String password;
     
-    private boolean isLoggedIn ;
-
+    private String name;
+    private Integer id; 
+    private Integer type;
+    private String email;  
+    private boolean loggedIn;  
+    
+    
     public AccountS() {
+        this.loggedIn = false;
     }
-
-    public AccountS(Integer accountId, String name, Integer accountType, boolean isLoggedIn) {
-        this.accountId = accountId;
+    
+    
+    public AccountS(String name, Integer id, Integer type) {
         this.name = name;
-        this.accountType = accountType; 
-        this.isLoggedIn = isLoggedIn;
+        this.id = id;
+        this.type = type;
+        this.loggedIn = true;
+    }
+    
+    
+    public AccountS(String name, Integer id, Integer type, String email) {
+        this.name = name;
+        this.id = id;
+        this.type = type;
+        this.email = email;
+        this.loggedIn = true;
     }
 
-    // Getter and Setter for accountType
-    public Integer getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(Integer accountType) {
-        this.accountType = accountType;
-    }
-
-   
-    public Integer getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(Integer accountId) {
-        this.accountId = accountId;
-    }
-
+    
     public String getName() {
         return name;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    
     public void setName(String name) {
         this.name = name;
     }
 
-    public boolean isLoggedIn() {
-        return isLoggedIn;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setLoggedIn(boolean loggedIn) {
-        isLoggedIn = loggedIn;
+    public void setType(Integer type) {
+        this.type = type;
     }
-
-    public String getTel() {
-        return tel;
-    }
-
-    public void setTel(String tel) {
-        this.tel = tel;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
+    
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public String getPassword() {
-        return password;
+    
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
-
-    public void setPassword(String password) {
-        this.password = password;
+    
+    
+    public void login(String name, Integer id, Integer type, String email) {
+        this.name = name;
+        this.id = id;
+        this.type = type;
+        this.email = email;
+        this.loggedIn = true;
+    }
+    
+    
+    public void logout() {
+        this.name = null;
+        this.id = null;
+        this.type = null;
+        this.email = null;
+        this.loggedIn = false;
+    }
+    
+    
+    public boolean hasValidSession() {
+        return this.loggedIn && this.id != null;
+    }
+    
+    
+    @Override
+    public String toString() {
+        return "AccountS{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", type=" + type +
+                ", email='" + email + '\'' +
+                ", loggedIn=" + loggedIn +
+                '}';
+    }
+    
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        AccountS accountS = (AccountS) obj;
+        return id != null && id.equals(accountS.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

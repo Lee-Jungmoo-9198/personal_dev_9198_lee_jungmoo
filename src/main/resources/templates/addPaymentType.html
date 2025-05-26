@@ -1,38 +1,66 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<meta charset="UTF-8">
+	<title>Daily PicK - クレジットカード追加</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
-<body>
-    <div class="container mt-5">
-        <h1 class="text-center"></h1>
-        <h2 class="text-center">クレジットカード追加</h2>
-        <form>
-            <div class="form-group">
-                <label for="cardNumber">番号</label>
-                <input type="text" class="form-control" id="cardNumber" placeholder="カード番号 ">
-            </div>
-            <div class="form-group">
-                <label for="expiryDate">期限</label>
-                <input type="text" class="form-control" id="expiryDate_mm" placeholder="MM">/
-                <input type="text" class="form-control" id="expiryDate_yy" placeholder="YY">
-            </div>
-            <div class="form-group">
-                <label for="securityCode">セキュリティコード</label>
-                <input type="text" class="form-control" id="securityCode" placeholder="セキュリティコード ">
-            </div>
-            <div class="form-group">
-                <label for="name">名前(英字)</label>
-                <input type="text" class="form-control" id="name" placeholder="名前">
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">追加</button>
-        </form>
-    </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<body class="bg-light">
+
+	<header th:replace="header"></header>
+
+	<main>
+		<div class="container mt-4">
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					<div class="card">
+						<div class="card-header">
+							<h3 class="mb-0">クレジットカード追加</h3>
+						</div>
+						<div class="card-body">
+							<form action="/mypage/addCreditCard" method="post">
+								<div class="mb-3">
+									<label for="cardNumber" class="form-label fw-bold">カード番号</label>
+									<input type="text" class="form-control" id="cardNumber" name="cardNumber" 
+										   placeholder="カード番号を入力してください" required>
+								</div>
+								<div class="mb-3">
+									<label for="expiryDate" class="form-label fw-bold">有効期限</label>
+									<div class="row">
+										<div class="col-6">
+											<input type="text" class="form-control" id="expiryDate_mm" name="expiryMonth" 
+												   placeholder="MM" required maxlength="2">
+										</div>
+										<div class="col-6">
+											<input type="text" class="form-control" id="expiryDate_yy" name="expiryYear" 
+												   placeholder="YY" required maxlength="2">
+										</div>
+									</div>
+								</div>
+								<div class="mb-3">
+									<label for="securityCode" class="form-label fw-bold">セキュリティコード</label>
+									<input type="text" class="form-control" id="securityCode" name="securityCode" 
+										   placeholder="セキュリティコードを入力してください" required maxlength="4">
+								</div>
+								<div class="mb-3">
+									<label for="cardName" class="form-label fw-bold">カード名義人（英字）</label>
+									<input type="text" class="form-control" id="cardName" name="cardName" 
+										   placeholder="英字で名前を入力してください" required>
+								</div>
+								<div class="text-center">
+									<button type="submit" class="btn btn-dark">追加</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
 </body>
+
 </html>

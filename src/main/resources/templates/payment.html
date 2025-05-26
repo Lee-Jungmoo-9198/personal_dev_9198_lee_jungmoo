@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Daily PicK - 注文確認</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+
+<body class="bg-light">
+	<header th:replace="header"></header>
+
+	<main>
+		<div class="container mt-4">
+			<div class="bg-white p-4 border">
+				<h2 class="text-center mb-4">注文確認</h2>
+
+				<!-- 商品情報セクション -->
+				<div class="mb-4">
+					<h5 class="mb-3 pb-2 border-bottom">商品情報</h5>
+
+					<div class="table-responsive">
+						<table class="table">
+							<thead class="table-light">
+								<tr>
+									<th>商品</th>
+									<th class="text-end">単価</th>
+									<th class="text-center">数量</th>
+									<th class="text-end">小計</th>
+									<th class="text-center">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item : ${cart.items}">
+									<td>
+										<div class="d-flex align-items-center">
+											<div class="me-3">
+												<img th:if="${item.img != null and !item.img.isEmpty()}"
+													th:src="@{/img/{imgFileName}(imgFileName=${item.img})}" 
+													alt="商品画像"
+													style="max-width: 60px; max-height: 60px; object-fit: contain;">
+												<span th:unless="${item.img != null and !item.img.isEmpty()}"
+													class="d-inline-block text-center bg-light p-2 border"
+													style="width: 60px; height: 60px; line-height: 40px; font-size: 0.8rem;">
+													画像なし
+												</span>
+											</div>
+											<div>
+												<strong th:text="${item.name}">商品名</strong>
+											</div>
+										</div>
+									</td>
+									<td class="text-end">
+										<span th:text="'¥' + ${item.price}">¥1,000</span>
+									</td>
+									<td class="text-center">
+										<span class="badge bg-secondary" th:text="${item.quantity}">1</span>
+									</td>
+									<td class="text-end">
+										<strong th:text="'¥' + ${item.price * item.quantity}">¥1,000</strong>
+									</td>
+									<td class="text-center">
+										<form method="post" th:action="@{/cart/delete}" style="display: inline;">
+											<input type="hidden" name="itemId" th:value="${item.id}" />
+											<button type="submit" class="btn btn-danger btn-sm"
+												onclick="return confirm('この商品を削除しますか？')">
+												削除
+											</button>
+										</form>
+									</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr class="table-warning">
+									<td colspan="3" class="text-end">
+										<strong>合計金額：</strong>
+									</td>
+									<td class="text-end">
+										<strong th:text="'¥' + ${#aggregates.sum(cart.items.![price * quantity])}">¥0</strong>
+									</td>
+									<td></td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+
+				<!-- お客様情報・お支払い情報セクション -->
+				<div class="row mb-4">
+					<div class="col-md-6">
+						<div class="border p-3 h-100">
+							<h5 class="mb-3 pb-2 border-bottom">お客様情報</h5>
+							<table class="table table-borderless table-sm">
+								<tr>
+									<td width="30%" class="text-muted"><strong>お名前</strong></td>
+									<td th:text="${form.name}">山田太郎</td>
+								</tr>
+								<tr>
+									<td class="text-muted"><strong>住所</strong></td>
+									<td>
+										<div>〒<span th:text="${form.postalCode}">123-4567</span></div>
+										<div>
+											<span th:if="${preName != null}" th:text="${preName.name}">東京都</span>
+											<span th:text="${form.street}">新宿区西新宿1-1-1</span>
+										</div>
+										<div th:if="${form.building != null and !form.building.isEmpty()}" th:text="${form.building}">新宿ビル101号室</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="text-muted"><strong>電話番号</strong></td>
+									<td th:text="${form.tel}">090-1234-5678</td>
+								</tr>
+								<tr>
+									<td class="text-muted"><strong>メール</strong></td>
+									<td th:text="${form.email}">example@email.com</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="border p-3 h-100">
+							<h5 class="mb-3 pb-2 border-bottom">お支払い情報</h5>
+
+							<div th:if="${payType != null}">
+								<div class="bg-light p-3 rounded">
+									<div class="mb-2">
+										<strong>支払方法：</strong>
+										<span th:text="${payType.name}">クレジットカード</span>
+									</div>
+									<div th:if="${usedCreditCard != null}">
+										<p class="mb-1"><strong>カード番号:</strong>
+											<span th:with="cardNumber=${usedCreditCard?.number}">
+												<span th:if="${cardNumber != null and #strings.length(cardNumber) >= 4}">
+													**** **** **** <span th:text="${#strings.substring(cardNumber, #strings.length(cardNumber) - 4)}">0000</span>
+												</span>
+												<span th:unless="${cardNumber != null and #strings.length(cardNumber) >= 4}">
+													情報なし
+												</span>
+											</span>
+										</p>
+										<p class="mb-1"><strong>名義:</strong> <span th:text="${usedCreditCard.name}">カード名義</span></p>
+										<p class="mb-1"><strong>有効期限：</strong> <span th:text="${usedCreditCard.expirationMm} + '/' + ${usedCreditCard.expirationYy}">12/25</span></p>
+										<p class="mb-0"><strong>CVC：</strong> <span th:text="${usedCreditCard.cvc}">***</span></p>
+									</div>
+								</div>
+							</div>
+
+							<div th:unless="${payType != null}" class="alert alert-warning">
+								支払い情報が選択されていません
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- 注文ボタンセクション -->
+				<div class="text-center mt-4">
+					<div class="alert alert-info mb-3">
+						<strong>ご注意：</strong>「注文を確定する」ボタンを押すと、注文が完了します。内容をよくご確認ください。
+					</div>
+
+					<div>
+						<button type="button" class="btn btn-secondary me-3" onclick="history.back()">戻る</button>
+
+						<form method="post" th:action="@{/order}" style="display: inline;">
+							<!-- 基本情報 -->
+							<input type="hidden" name="name" th:value="${form.name}" />
+							<input type="hidden" name="postalCode" th:value="${form.postalCode}" />
+							<input type="hidden" name="prefectureId" th:value="${form.prefectureId}" />
+							<input type="hidden" name="street" th:value="${form.street}" />
+							<input type="hidden" name="building" th:value="${form.building}" />
+							<input type="hidden" name="tel" th:value="${form.tel}" />
+							<input type="hidden" name="email" th:value="${form.email}" />
+
+							<!-- アカウント情報 -->
+							<input type="hidden" name="accountId" th:value="${accountId}" />
+							<input type="hidden" name="addressId" th:value="${addressId}" />
+
+							<!-- 支払い情報 -->
+							<input type="hidden" name="number" th:value="${creditform != null ? creditform.number : ''}" />
+							<input type="hidden" name="yy" th:value="${creditform != null ? creditform.yy : ''}" />
+							<input type="hidden" name="mm" th:value="${creditform != null ? creditform.mm : ''}" />
+							<input type="hidden" name="cardName" th:value="${creditform != null ? creditform.cardName : ''}" />
+							<input type="hidden" name="cvc" th:value="${creditform != null ? creditform.cvc : ''}" />
+							<input type="hidden" name="type" th:value="${creditform != null ? creditform.type : ''}" />
+
+							<button type="submit" class="btn btn-dark" onclick="return confirm('注文を確定しますか？')">
+								注文を確定する
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+</html>

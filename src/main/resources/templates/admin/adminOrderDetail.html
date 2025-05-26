@@ -1,10 +1,280 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
 
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Daily PicK(管理用) - 注文詳細</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/adminStyle.css">
+	<style>
+		.order-summary {
+			background-color: #f8f9fa;
+			border-radius: 8px;
+			padding: 20px;
+			margin-bottom: 30px;
+		}
+
+		.customer-info {
+			background-color: #ffffff;
+			border: 1px solid #dee2e6;
+			border-radius: 8px;
+			padding: 20px;
+			margin-bottom: 30px;
+		}
+
+		.total-price {
+			font-size: 1.5rem;
+			font-weight: bold;
+			color: #dc3545;
+		}
+
+		.card-info {
+			background-color: #f1f3f4;
+			padding: 10px;
+			border-radius: 5px;
+			font-family: monospace;
+		}
+
+		.section-title {
+			color: #495057;
+			border-bottom: 2px solid #007bff;
+			padding-bottom: 5px;
+			margin-bottom: 20px;
+		}
+
+		@media (max-width: 768px) {
+			.table-responsive {
+				font-size: 0.9rem;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<header th:replace="admin/adminheader"></header>
+	<div class="container">
+		<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			<span th:text="${error}">エラーメッセージ</span>
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
+
+		<div class="row">
+			<div class="col-12">
+				<h2 class="text-center mb-4 section-title">注文詳細</h2>
+				<p class="text-center text-muted">注文番号: <span class="fw-bold" th:text="${order?.id ?: 'N/A'}">1</span>
+				</p>
+			</div>
+		</div>
+
+		<div class="row" th:if="${order != null}">
+			<div class="col-12">
+				<div class="order-summary">
+					<h3 class="section-title">商品情報</h3>
+
+					<div class="table-responsive">
+						<table class="table table-bordered table-hover">
+							<thead>
+								<tr>
+									<th>商品画像</th>
+									<th>商品名</th>
+									<th class="text-right">単価</th>
+									<th class="text-center">数量</th>
+									<th class="text-right">小計</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="detail : ${orderDetails}"
+									th:if="${orderDetails != null and !orderDetails.isEmpty()}">
+									<td>
+										<div class="product-image">
+											<img th:if="${detail.item != null and detail.item.img != null and !detail.item.img.isEmpty()}"
+												th:src="@{/img/{imgFileName}(imgFileName=${detail.item.img})}"
+												alt="商品画像"
+												style="max-width: 80px; max-height: 80px; object-fit: contain;">
+											<span
+												th:unless="${detail.item != null and detail.item.img != null and !detail.item.img.isEmpty()}"
+												class="text-muted">画像なし</span>
+										</div>
+									</td>
+									<td>
+										<strong th:text="${detail.item?.name ?: '商品情報なし'}">商品名</strong>
+									</td>
+									<td class="text-right">
+										<span
+											th:text="'¥' + ${#numbers.formatInteger(detail.item?.price ?: 0, 3, 'COMMA')}">¥1,000</span>
+									</td>
+									<td class="text-center">
+										<span class="badge badge-secondary" th:text="${detail.quantity ?: 0}">1</span>
+									</td>
+									<td class="text-right">
+										<strong
+											th:with="priceVal=${detail.item?.price ?: 0}, qtyVal=${detail.quantity ?: 0}"
+											th:text="'¥' + ${#numbers.formatInteger(priceVal * qtyVal, 3, 'COMMA')}">¥1,000</strong>
+									</td>
+								</tr>
+								<tr th:if="${orderDetails == null or orderDetails.isEmpty()}">
+									<td colspan="5" class="text-center text-muted">注文詳細情報がありません</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr class="table-warning">
+									<td colspan="4" class="text-right">
+										<strong class="total-price">合計金額：</strong>
+									</td>
+									<td class="text-right">
+										<span class="total-price"
+											th:text="'¥' + ${#numbers.formatInteger(order?.totalPrice ?: 0, 3, 'COMMA')}">¥0</span>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row" th:if="${order != null}">
+			<div class="col-md-6">
+				<div class="customer-info">
+					<h3 class="section-title">お客様情報</h3>
+
+					<div th:if="${customerInfo != null}">
+						<table class="table table-borderless">
+							<tr>
+								<td width="30%" class="text-muted"><strong>お名前</strong></td>
+								<td th:text="${customerInfo.name ?: '情報なし'}">山田太郎</td>
+							</tr>
+							<tr>
+								<td class="text-muted"><strong>住所</strong></td>
+								<td>
+									<div th:if="${customerInfo.postalCode != null}">
+										〒<span th:text="${customerInfo.postalCode}">123-4567</span>
+									</div>
+									<div>
+										<span th:if="${prefecture != null}" th:text="${prefecture.name}">都道府県</span>
+										<span th:if="${shippingAddress != null}"
+											th:text="${shippingAddress.street ?: ''}">市区町村番地</span>
+									</div>
+									<div th:if="${shippingAddress != null and shippingAddress.building != null and !shippingAddress.building.isEmpty()}"
+										th:text="${shippingAddress.building}">建物名</div>
+									<div th:if="${customerInfo.postalCode == null and shippingAddress == null}"
+										class="text-muted">
+										住所情報なし
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-muted"><strong>電話番号</strong></td>
+								<td th:text="${customerInfo.tel ?: '情報なし'}">090-1234-5678</td>
+							</tr>
+							<tr>
+								<td class="text-muted"><strong>メール</strong></td>
+								<td th:text="${customerInfo.email ?: '情報なし'}">example@email.com</td>
+							</tr>
+						</table>
+					</div>
+					<div th:unless="${customerInfo != null}" class="alert alert-warning">
+						顧客情報が見つかりません
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="customer-info">
+					<h3 class="section-title">お支払い情報</h3>
+
+					<div th:if="${payType != null}">
+						<div class="card-info mb-3">
+							<div class="mb-2">
+								<strong>支払方法：</strong>
+								<span th:text="${payType.name}">支払方法</span>
+							</div>
+							<div th:if="${usedCreditCard != null}">
+								<p><strong>カード番号:</strong>
+									<span th:with="cardNumber=${usedCreditCard.number}">
+										<span th:if="${cardNumber != null and #strings.length(cardNumber) >= 4}">
+											<span
+												th:text="'**** **** **** ' + ${#strings.substring(cardNumber, #strings.length(cardNumber) - 4)}">
+												**** **** **** 1234
+											</span>
+										</span>
+										<span th:unless="${cardNumber != null and #strings.length(cardNumber) >= 4}">
+											情報なし
+										</span>
+									</span>
+								</p>
+								<p>
+									<strong>名義:</strong>
+									<span th:text="${usedCreditCard.name ?: '情報なし'}">カード名義</span>
+								</p>
+								<p>
+									<strong>有効期限：</strong>
+									<span
+										th:text="${usedCreditCard.expirationMm} + '/' + ${usedCreditCard.expirationYy}">12/25</span>
+								</p>
+							</div>
+							<div th:unless="${usedCreditCard != null}">
+								<p class="text-muted">クレジットカード以外の支払方法</p>
+							</div>
+						</div>
+					</div>
+
+					<div th:unless="${payType != null}" class="alert alert-warning">
+						支払い情報が見つかりません
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row mt-4" th:if="${order != null}">
+			<div class="col-12">
+				<div class="customer-info">
+					<h3 class="section-title">注文情報</h3>
+					<div class="row">
+						<div class="col-md-6">
+							<p><strong>注文日:</strong>
+								<span th:if="${order.orderedOn != null}"
+									th:text="${#dates.format(order.orderedOn, 'yyyy/MM/dd HH:mm')}">2025/01/01</span>
+								<span th:unless="${order.orderedOn != null}">情報なし</span>
+							</p>
+							<p><strong>注文番号:</strong>
+								<span th:text="${order.id}">1</span>
+							</p>
+						</div>
+						<div class="col-md-6">
+							<p><strong>注文状態:</strong>
+								<span class="badge badge-success">確定</span>
+							</p>
+							<p><strong>最終金額:</strong>
+								<span class="text-success font-weight-bold"
+									th:text="'¥' + ${#numbers.formatInteger(order.totalPrice ?: 0, 3, 'COMMA')}">¥0</span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row" th:unless="${order != null}">
+			<div class="col-12">
+				<div class="alert alert-danger text-center">
+					<h4>注文情報が見つかりません</h4>
+					<p>指定された注文は存在しないか、アクセス権限がありません。</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="row mt-4">
+			<div class="col-12 text-center">
+				<a href="/admin/orders" class="btn btn-secondary">注文一覧に戻る</a>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

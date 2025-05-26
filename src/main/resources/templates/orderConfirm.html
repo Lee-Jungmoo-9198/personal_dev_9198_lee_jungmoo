@@ -1,114 +1,120 @@
 <!DOCTYPE html>
 <html lang="ja" xmlns:th="http://www.thymeleaf.org">
-
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<title>Daily PicK - ご注文確認</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
-	<title>サンプルショッピング - ご注文確認</title>
 </head>
 
-<body>
-	<div class="container">
-		<h1 class="text-center">サンプルショッピング</h1>
-		<div class="cart-box mx-auto">
-			<h2 class="text-center">カート内容確認</h2>
+<body class="bg-light">
+	<header th:replace="header"></header>
 
-			<div th:if="${cart.items.empty}" class="alert alert-info text-center" role="alert">
-				カートが空です。
+	<main>
+		<div class="container mt-4">
+			<div class="row">
+				<div class="col-12">
+					<h2 class="text-center mb-4">ご注文確認</h2>
+				</div>
 			</div>
 
-			<div th:each="item : ${cart.items}" class="product-item d-flex justify-content-between align-items-center mt-3">
-				<img th:if="${item.img != null and !item.img.isEmpty()}" th:src="@{/img/{imgFileName}(imgFileName=${item.img})}" alt="商品画像"
-					style="max-width: 100%; max-height: 80px; object-fit: contain;">
-				<span th:unless="${item.img != null and !item.img.isEmpty()}">画像なし</span>
+			<!-- カート内容 -->
+			<div class="row mb-4">
+				<div class="col-12">
+					<div class="bg-white p-4 rounded shadow-sm">
+						<h4 class="mb-3">カート内容確認</h4>
 
-				<div>
-					<h5 th:text="${item.name}">商品名</h5>
-					<p th:text="${item.detail}">商品詳細</p>
+						<div th:if="${cart != null and #lists.isEmpty(cart.items)}" class="alert alert-info text-center" role="alert">
+							カートが空です。
+						</div>
+
+						<div th:if="${cart != null and !#lists.isEmpty(cart.items)}">
+							<div th:each="item : ${cart.items}" class="row align-items-center py-3 border-bottom">
+								<div class="col-md-2">
+									<div class="product-image d-flex justify-content-center align-items-center">
+										<img th:if="${item.img != null and !item.img.isEmpty()}" 
+											th:src="@{/img/{imgFileName}(imgFileName=${item.img})}" 
+											alt="商品画像"
+											style="max-width: 100%; max-height: 80px; object-fit: contain;">
+										<span th:unless="${item.img != null and !item.img.isEmpty()}">画像なし</span>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<h6 th:text="${item.name}">商品名</h6>
+									<p class="text-muted small" th:text="${item.detail}">商品詳細</p>
+								</div>
+								<div class="col-md-3 text-center">
+									<span class="badge bg-secondary" th:text="${item.quantity} + ' 個'">1 個</span>
+								</div>
+								<div class="col-md-3 text-end">
+									<strong th:text="'¥' + ${item.price * item.quantity}">¥値段</strong>
+								</div>
+							</div>
+						</div>
+
+						<div class="text-end mt-4" th:if="${totalPrice != null}">
+							<h4 class="text-primary" th:text="'合計: ¥' + ${totalPrice}">¥合計</h4>
+						</div>
+					</div>
 				</div>
-
-				<div class="d-flex align-items-center">
-					<span class="mx-2" th:text="${item.quantity}">1</span> 個
-				</div>
-
-				<span th:text="'¥' + ${item.price * item.quantity}">¥値段</span>
 			</div>
 
-			<div class="text-right mt-4">
-				<h4 th:text="'合計: ¥' + ${totalPrice}">¥合計</h4>
+			<!-- お客様情報 -->
+			<div class="row mb-4">
+				<div class="col-12">
+					<div class="bg-white p-4 rounded shadow-sm">
+						<h4 class="mb-3">お客様情報確認</h4>
+
+						<div class="row">
+							<div class="col-md-6">
+								<table class="table table-borderless" th:if="${loggedInAccount != null}">
+									<tbody>
+										<tr><th scope="row" class="text-muted">名前</th><td th:text="${loggedInAccount.name}">太郎</td></tr>
+										<tr><th scope="row" class="text-muted">住所</th><td th:text="${loggedInAccount.address}">住所</td></tr>
+										<tr><th scope="row" class="text-muted">電話番号</th><td th:text="${loggedInAccount.tel}">電話</td></tr>
+										<tr><th scope="row" class="text-muted">e-mail</th><td th:text="${loggedInAccount.email}">メール</td></tr>
+									</tbody>
+								</table>
+
+								<table class="table table-borderless" th:if="${loggedInAccount == null}">
+									<tbody>
+										<tr><th scope="row" class="text-muted">名前</th><td th:text="${customerName}">ゲスト名</td></tr>
+										<tr>
+											<th scope="row" class="text-muted">住所</th>
+											<td th:text="'〒' + ${customerPostalCode} + ' ' + ${customerPrefectureId} + ' ' + ${customerStreet} + ' ' + ${customerBuilding}">住所</td>
+										</tr>
+										<tr><th scope="row" class="text-muted">電話番号</th><td th:text="${customerTel}">電話</td></tr>
+										<tr><th scope="row" class="text-muted">e-mail</th><td th:text="${customerEmail}">メール</td></tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
-			<h2 class="mt-5">お客様情報確認</h2>
+			<!-- 確認ボタン -->
+			<div class="row">
+				<div class="col-12">
+					<div class="bg-white p-4 rounded shadow-sm text-center">
+						<form th:action="@{/order/complete}" method="post">
+							<input type="hidden" name="name" th:value="${customerName}">
+							<input type="hidden" name="tel" th:value="${customerTel}">
+							<input type="hidden" name="email" th:value="${customerEmail}">
+							<input type="hidden" name="postal_code" th:value="${customerPostalCode}">
+							<input type="hidden" name="prefecture_id" th:value="${customerPrefectureId}">
+							<input type="hidden" name="street" th:value="${customerStreet}">
+							<input type="hidden" name="building" th:value="${customerBuilding}">
+							<input type="hidden" name="paymentMethod" th:value="${paymentMethod}">
+							<input type="hidden" name="creditCardId" th:value="${creditCardId}">
 
-			<!-- ログインユーザー用 -->
-			<table class="table" th:if="${loggedInAccount != null}">
-				<tbody>
-					<tr>
-						<th scope="row">名前</th>
-						<td th:text="${loggedInAccount.name}">太郎</td>
-					</tr>
-					<tr>
-						<th scope="row">住所</th>
-						<td th:text="${loggedInAccount.address}">〒222-3333 神奈川県川崎市...</td>
-					</tr>
-					<tr>
-						<th scope="row">電話番号</th>
-						<td th:text="${loggedInAccount.tel}">090-1234-5678</td>
-					</tr>
-					<tr>
-						<th scope="row">e-mail</th>
-						<td th:text="${loggedInAccount.email}">aaa@sample.com</td>
-					</tr>
-				</tbody>
-			</table>
-
-			<!-- ゲスト用 -->
-			<table class="table" th:if="${loggedInAccount == null}">
-				<tbody>
-					<tr>
-						<th scope="row">名前</th>
-						<td th:text="${customerName}">ゲスト名</td>
-					</tr>
-					<tr>
-						<th scope="row">住所</th>
-						<td th:text="'〒' + ${customerPostalCode} + ' ' + ${customerPrefectureId} + ' ' + ${customerStreet} + ' ' + ${customerBuilding}">住所</td>
-					</tr>
-					<tr>
-						<th scope="row">電話番号</th>
-						<td th:text="${customerTel}">電話</td>
-					</tr>
-					<tr>
-						<th scope="row">e-mail</th>
-						<td th:text="${customerEmail}">メール</td>
-					</tr>
-				</tbody>
-			</table>
-
-			<form th:action="@{/order/complete}" method="post">
-				<!-- ゲスト情報 hidden -->
-				<input type="hidden" name="name" th:value="${customerName}">
-				<input type="hidden" name="tel" th:value="${customerTel}">
-				<input type="hidden" name="email" th:value="${customerEmail}">
-				<input type="hidden" name="postal_code" th:value="${customerPostalCode}">
-				<input type="hidden" name="prefecture_id" th:value="${customerPrefectureId}">
-				<input type="hidden" name="street" th:value="${customerStreet}">
-				<input type="hidden" name="building" th:value="${customerBuilding}">
-				<input type="hidden" name="paymentMethod" th:value="${paymentMethod}">
-				<input type="hidden" name="creditCardId" th:value="${creditCardId}">
-
-				<div class="text-center">
-					<a th:href="@{/order/info}" class="btn btn-secondary">支払い方法選択へ戻る</a>
-					<button type="submit" class="btn btn-primary">注文を確定する</button>
+							<a th:href="@{/order/info}" class="btn btn-secondary me-3">支払い方法選択へ戻る</a>
+							<button type="submit" class="btn btn-primary">注文を確定する</button>
+						</form>
+					</div>
 				</div>
-			</form>
+			</div>
 		</div>
-	</div>
-
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	</main>
 </body>
-
 </html>

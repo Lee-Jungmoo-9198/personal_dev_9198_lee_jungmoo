@@ -1,10 +1,39 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+<html lang="ja">
 
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title> Daily PicK(管理用) - カテゴリー更新</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/adminStyle.css">
+</head>
+
+<body>
+	<header th:replace="admin/adminheader"></header>
+	<div class="container">
+		<h2 class="mt-4">カテゴリー更新</h2>
+
+		<form th:action="|/admin/category/${category.id}/edit|" method="post">
+			<table class="table table-bordered">
+				<tr>
+					<th>カテゴリーID</th>
+					<td>[[${category.id}]]</td>
+				</tr>
+				<tr>
+					<th>カテゴリー名</th>
+					<td>
+						<input type="text" class="form-control" name="name" th:value="${category.name}">
+					</td>
+				</tr>
+			</table>
+			<button class="btn btn-primary">更新</button>
+		</form>
+	</div>
+	
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

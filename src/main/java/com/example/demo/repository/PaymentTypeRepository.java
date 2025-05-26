@@ -6,5 +6,7 @@ import com.example.demo.entity.PaymentType;
 
 public interface PaymentTypeRepository extends JpaRepository<PaymentType, Integer> {
 
+	 
+
 
 }

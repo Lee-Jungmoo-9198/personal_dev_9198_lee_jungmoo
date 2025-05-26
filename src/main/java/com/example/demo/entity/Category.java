@@ -20,9 +20,8 @@ import jakarta.persistence.Table;
 //		  , primary key (id)
 //		);
 
-
 @Entity
-@Table(name="categories")
+@Table(name = "categories")
 public class Category {
 
 	@Id

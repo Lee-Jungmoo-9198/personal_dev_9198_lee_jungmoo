@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Daily PicK - 決済方法選択</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+
+<body class="bg-light">
+	<header th:replace="header"></header>
+	
+	<main>
+		<div class="container mt-4">
+			<div class="payment-box mx-auto bg-white p-4 border">
+				<h2 class="text-center mb-4">お支払い方法</h2>
+				<form th:action="@{/order/info}" method="post" id="paymentForm">
+					<input type="hidden" name="name" th:value="${form.name}" />
+					<input type="hidden" name="postalCode" th:value="${form.postalCode}" />
+					<input type="hidden" name="prefectureId" th:value="${form.prefectureId}" />
+					<input type="hidden" name="street" th:value="${form.street}" />
+					<input type="hidden" name="building" th:value="${form.building}" />
+					<input type="hidden" name="tel" th:value="${form.tel}" />
+					<input type="hidden" name="email" th:value="${form.email}" />
+
+					<input type="hidden" name="accountId" th:value="${accountId}" />
+					<input type="hidden" name="addressId" th:value="${addressId}" />
+					<input type="hidden" name="isLoggedIn" th:value="${isLoggedIn}" />
+
+					<input type="hidden" name="button" value="1">
+
+					<input type="hidden" name="selectedCreditCardId" id="selectedCreditCardId" value="">
+
+					<div class="mb-3">
+						<label class="form-label">お支払い方法<span class="text-danger">*</span></label><br>
+						<div class="form-check">
+							<input class="form-check-input payment-method-radio" type="radio" name="type"
+								id="paymentMethod1" value="1" checked> 
+							<label class="form-check-label" for="paymentMethod1">代金引換</label>
+						</div>
+
+						<div th:each="card : ${registeredCreditCards}">
+							<div class="form-check">
+								<input class="form-check-input payment-method-radio" type="radio" name="type"
+									th:id="'paymentMethod_card_' + ${card.id}" value="2" th:data-card-id="${card.id}"
+									th:checked="${selectedCreditCardId != null and selectedCreditCardId == card.id}">
+								<label class="form-check-label" th:for="'paymentMethod_card_' + ${card.id}">
+									クレジットカード (登録済み: **** **** **** <span
+										th:text="${#strings.substring(card.number, #strings.length(card.number) - 4)}">0000</span>)
+								</label>
+							</div>
+						</div>
+
+						<div class="form-check">
+							<input class="form-check-input payment-method-radio" type="radio" name="type"
+								id="paymentMethodNewCard" value="2"> 
+							<label class="form-check-label" for="paymentMethodNewCard">
+								新しいカードで支払う</label>
+						</div>
+					</div>
+
+					<div id="creditCardDetails" style="display: none;">
+						<div class="mb-3">
+							<label for="number" class="form-label">クレジットカード番号<span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="number" name="number" placeholder="カード番号を入力してください"
+								maxlength="16" pattern="\d{13,16}">
+							<div class="form-text">13〜16桁の数字を入力してください</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 mb-3">
+								<label for="mm" class="form-label">有効期限 (月)<span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="mm" name="mm" placeholder="MM" maxlength="2"
+									pattern="\d{1,2}">
+								<div class="form-text">1〜12の数字</div>
+							</div>
+							<div class="col-md-6 mb-3">
+								<label for="yy" class="form-label">有効期限 (年)<span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="yy" name="yy" placeholder="YY" maxlength="2"
+									pattern="\d{2}">
+								<div class="form-text">下2桁の年</div>
+							</div>
+						</div>
+						<div class="mb-3">
+							<label for="cvc" class="form-label">セキュリティコード<span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="cvc" name="cvc" placeholder="セキュリティコードを入力してください"
+								maxlength="4" pattern="\d{3,4}">
+							<div class="form-text">カード裏面の3〜4桁の数字</div>
+						</div>
+						<div class="mb-3">
+							<label for="cardName" class="form-label">カード名義(英字)<span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="cardName" name="cardName" placeholder="名前を入力してください">
+							<div class="form-text">例: TARO YAMADA</div>
+						</div>
+					</div>
+
+					<div class="text-center mt-4">
+						<a th:href="@{/order}" class="btn btn-secondary me-2">情報入力へ戻る</a>
+						<button type="submit" class="btn btn-dark">確認画面へ</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</main>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const paymentMethodRadios = document.querySelectorAll('input[name="type"]');
+			const creditCardDetailsDiv = document.getElementById('creditCardDetails');
+			const paymentForm = document.getElementById('paymentForm');
+
+			const selectedCreditCardIdInput = document.getElementById('selectedCreditCardId');
+
+			const cardNumberInput = document.getElementById('number');
+			const expirationMmInput = document.getElementById('mm');
+			const expirationYyInput = document.getElementById('yy');
+			const cvcInput = document.getElementById('cvc');
+			const nameInput = document.getElementById('cardName');
+
+			function toggleCardInputState(disable) {
+				if (cardNumberInput) {
+					cardNumberInput.disabled = disable;
+					expirationMmInput.disabled = disable;
+					expirationYyInput.disabled = disable;
+					cvcInput.disabled = disable;
+					nameInput.disabled = disable;
+
+					cardNumberInput.required = !disable;
+					expirationMmInput.required = !disable;
+					expirationYyInput.required = !disable;
+					cvcInput.required = !disable;
+					nameInput.required = !disable;
+				}
+			}
+
+			function updateFormState() {
+				const selectedRadio = document.querySelector('input[name="type"]:checked');
+				if (!selectedRadio) return;
+
+				const selectedValue = selectedRadio.value;
+				const selectedId = selectedRadio.id;
+
+				selectedCreditCardIdInput.value = '';
+
+				creditCardDetailsDiv.style.display = 'none';
+				toggleCardInputState(true);
+
+				if (selectedValue === '2') {
+					if (selectedId === 'paymentMethodNewCard') {
+						creditCardDetailsDiv.style.display = 'block';
+						toggleCardInputState(false);
+					} else if (selectedId.startsWith('paymentMethod_card_')) {
+						const cardId = selectedRadio.dataset.cardId;
+						selectedCreditCardIdInput.value = cardId;
+						console.log('Selected registered card ID set to: ' + cardId);
+					}
+				}
+			}
+
+			updateFormState();
+
+			paymentMethodRadios.forEach(function (radio) {
+				radio.addEventListener('change', updateFormState);
+			});
+
+			paymentForm.addEventListener('submit', function (event) {
+				const selectedRadio = document.querySelector('input[name="type"]:checked');
+
+				if (!selectedRadio) {
+					alert('お支払い方法を選択してください。');
+					event.preventDefault();
+					return;
+				}
+
+				const selectedId = selectedRadio.id;
+
+				if (selectedId === 'paymentMethodNewCard') {
+					if (cardNumberInput.disabled === false) {
+						if (!cardNumberInput.value.match(/^\d{13,16}$/)) {
+							alert('クレジットカード番号が正しくありません。');
+							event.preventDefault();
+							return;
+						}
+
+						const mm = parseInt(expirationMmInput.value, 10);
+						if (isNaN(mm) || mm < 1 || mm > 12) {
+							alert('有効期限(月)が正しくありません。');
+							event.preventDefault();
+							return;
+						}
+
+						if (!expirationYyInput.value.match(/^\d{2}$/)) {
+							alert('有効期限(年)が正しくありません。');
+							event.preventDefault();
+							return;
+						}
+
+						if (!cvcInput.value.match(/^\d{3,4}$/)) {
+							alert('セキュリティコードが正しくありません。');
+							event.preventDefault();
+							return;
+						}
+
+						if (!nameInput.value.trim()) {
+							alert('カード名義を入力してください。');
+							event.preventDefault();
+							return;
+						}
+					}
+				}
+			});
+
+			if (cardNumberInput) {
+				cardNumberInput.addEventListener('input', function (e) {this.value = this.value.replace(/\D/g, '');});
+			}
+			if (expirationMmInput) {
+				expirationMmInput.addEventListener('input', function (e) {
+					this.value = this.value.replace(/\D/g, '');
+					const val = parseInt(this.value, 10);
+					if (!isNaN(val) && val > 12) {this.value = '12';}
+				});
+			}
+			if (expirationYyInput) {
+				expirationYyInput.addEventListener('input', function (e) {this.value = this.value.replace(/\D/g, '');});
+			}
+			if (cvcInput) {
+				cvcInput.addEventListener('input', function (e) {this.value = this.value.replace(/\D/g, '');});
+			}
+		});
+	</script>
+</body>
+
+</html>

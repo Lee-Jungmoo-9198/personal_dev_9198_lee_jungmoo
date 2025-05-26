@@ -1,10 +1,96 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+<html lang="ja">
 
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Daily PicK(管理用) - 在庫管理</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/adminStyle.css">
+</head>
+
+<body>
+	<header th:replace="admin/adminheader"></header>
+	<div class="container">
+		<h2 class="mt-4">在庫管理</h2>
+
+		<div class="image-placeholder">
+			<a th:href="@{/items/{itemId}(itemId=${item.id})}">
+				<div class="product-image d-flex justify-content-center align-items-center" style="height: 100%;">
+					<img th:if="${item?.img != null and !item.img.isEmpty()}"
+						th:src="@{/img/{imgFileName}(imgFileName=${item.img})}" alt="商品画像"
+						style="max-width: 100%; max-height: 150px; object-fit: contain;">
+					<span th:unless="${item?.img != null and !item.img.isEmpty()}">画像なし</span>
+				</div>
+			</a>
+		</div>
+
+		<form th:action="@{/items/stock/update}" method="post">
+			<input type="hidden" name="itemId" th:value="${item.id}" />
+
+			<table class="table table-bordered mt-3">
+				<tbody>
+					<tr>
+						<th scope="row">商品ID</th>
+						<td th:text="${item.id}">1</td>
+					</tr>
+					<tr>
+						<th scope="row">商品名</th>
+						<td th:text="${item.name}">Learn Java</td>
+					</tr>
+					<tr>
+						<th scope="row">カテゴリ名</th>
+						<td th:if="${itemCategory != null}" th:text="${itemCategory.name}">本</td>
+						<td th:unless="${itemCategory != null}">N/A</td>
+					</tr>
+					<tr>
+						<th scope="row">値段</th>
+						<td th:text="${item.price}">1500</td>
+					</tr>
+					<tr>
+						<th scope="row">現在の在庫</th>
+						<td id="current-stock" th:text="${stockQuantity}">10</td>
+					</tr>
+					<tr>
+						<th scope="row">追加在庫</th>
+						<td>
+							<select id="additional-stock-select" name="additionalQuantity" class="form-control">
+								<option th:each="i : ${#numbers.sequence(-10, 20)}" th:value="${i}" th:text="${i}"
+									th:selected="${i == 1}">0</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">合計在庫</th>
+						<td id="total-stock"></td>
+					</tr>
+				</tbody>
+			</table>
+			<button type="submit" class="btn btn-primary">更新</button>
+		</form>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+	<script th:inline="javascript">
+		document.addEventListener('DOMContentLoaded', function () {
+			const currentStockElement = document.getElementById('current-stock');
+			const additionalStockSelect = document.getElementById('additional-stock-select');
+			const totalStockElement = document.getElementById('total-stock');
+
+			function updateTotalStock() {
+				const currentStock = parseInt(currentStockElement.textContent, 10);
+				const additionalQuantity = parseInt(additionalStockSelect.value, 10);
+				const totalStock = currentStock + additionalQuantity;
+				totalStockElement.textContent = totalStock;
+			}
+
+			updateTotalStock();
+			additionalStockSelect.addEventListener('change', updateTotalStock);
+		});
+	</script>
 </body>
+
 </html>

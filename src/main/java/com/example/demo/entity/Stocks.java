@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,17 +12,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "stocks")
 public class Stocks {
-	//	create table public.stocks (
-	//			  id serial not null
-	//			  , items_id integer
-	//			  , quantity integer not null
-	//			  , create_date timestamp(6) without time zone
-	//			  , update_date timestamp(6) without time zone
-	//			  , create_id integer
-	//			  , update_id integer
-	//			  , delete_flg character(1)
-	//			  , primary key (id)
-	//			);
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,27 +23,26 @@ public class Stocks {
 	private Integer quantity;
 
 	@Column(name = "create_date")
-	private LocalDate createDate;
+	private LocalDateTime createDate;
 
 	@Column(name = "update_date")
-	private LocalDate updateDate;
+	private LocalDateTime updateDate;
 
 	@Column(name = "create_id")
-	private LocalDate createId;
+	private Integer createId;
 
 	@Column(name = "update_id")
-	private LocalDate updateId;
+	private Integer updateId;
 
 	@Column(name = "delete_flg")
-	private char deleteFlg;
+	private Character deleteFlg;
 
-	//デフォルトコンストラクタ
 	public Stocks() {
 	}
 
-	//コンストラクタ(主キー除く)
-	public Stocks(Integer itemsId, Integer quantity, LocalDate createDate, LocalDate updateDate, LocalDate createId,
-			LocalDate updateId, char deleteFlg) {
+	public Stocks(Integer itemsId, Integer quantity, LocalDateTime createDate, LocalDateTime updateDate,
+			Integer createId,
+			Integer updateId, Character deleteFlg) {
 		this.itemsId = itemsId;
 		this.quantity = quantity;
 		this.createDate = createDate;
@@ -88,43 +76,43 @@ public class Stocks {
 		this.quantity = quantity;
 	}
 
-	public LocalDate getCreateDate() {
+	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(LocalDate createDate) {
+	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
 	}
 
-	public LocalDate getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(LocalDate updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 
-	public LocalDate getCreateId() {
+	public Integer getCreateId() {
 		return createId;
 	}
 
-	public void setCreateId(LocalDate createId) {
+	public void setCreateId(Integer createId) {
 		this.createId = createId;
 	}
 
-	public LocalDate getUpdateId() {
+	public Integer getUpdateId() {
 		return updateId;
 	}
 
-	public void setUpdateId(LocalDate updateId) {
+	public void setUpdateId(Integer updateId) {
 		this.updateId = updateId;
 	}
 
-	public char getDeleteFlg() {
+	public Character getDeleteFlg() {
 		return deleteFlg;
 	}
 
-	public void setDeleteFlg(char deleteFlg) {
+	public void setDeleteFlg(Character deleteFlg) {
 		this.deleteFlg = deleteFlg;
 	}
 

@@ -1,84 +1,166 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>サンプルショッピング - マイページ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+	<meta charset="UTF-8">
+	<title>Daily PicK - マイページ</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
 
 <body class="bg-light">
 
-    <header th:replace="header"></header>
+	<header th:replace="header"></header>
 
-    <div class="container mt-4 bg-white p-4">
-        <h5>お客様情報</h5>
-        <table class="table">
-            <tbody>
-                <tr>
-                    <th scope="row">名前</th>
-                    <td>太郎</td>
-                </tr>
-                <tr>
-                    <th scope="row">電話番号</th>
-                    <td>090-1234-5678</td>
-                </tr>
-                <tr>
-                    <th scope="row">Eメール</th>
-                    <td>aaa@example.com</td>
-                </tr>
-                <tr>
-                    <th scope="row">郵便番号</th>
-                    <td>220-0004</td>
-                </tr>
-                <tr>
-                    <th scope="row">都道府県</th>
-                    <td>神奈川県</td>
-                </tr>
-                <tr>
-                    <th scope="row">住所</th>
-                    <td>横浜市西区みなとみらい</td>
-                </tr>
-                <tr>
-                    <th scope="row">建物名</th>
-                    <td>みなとみらいビル</td>
-                </tr>
-            </tbody>
-        </table>
-		<a href=#>パスワード変更はこちら</a><br>
-		<a href=#>住所追加はこちら</a><br>
-		<a href=#>決済情報追加</a><br>
-        <h5 class="mt-4">注文履歴</h5>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>注文番号</th>
-                    <th>注文日</th>
-                    <th>合計金額</th>
-                    <th>支払い方法</th>
-                    <th>詳細</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>2025/05/01</td>
-                    <td>5,000円</td>
-                    <td>クレジットカード</td>
-                    <td><a href="#" class="btn btn-link">詳細を見る</a></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>2025/05/02</td>
-                    <td>12,800円</td>
-                    <td>代金引換</td>
-                    <td><a href="#" class="btn btn-link">詳細を見る</a></td>
-                </tr>
-            </tbody>
-        </table>
-		<button class="btn btn-dark btn-sm mt-2"ll>会員退会</button>
-    </div>
+	<main>
+		<div class="container mt-4">
+			<div class="bg-white p-4 rounded shadow-sm">
+
+				<h3 class="mb-4">お客様情報</h3>
+				
+				<table class="table table-bordered">
+					<tr>
+						<th width="150">名前</th>
+						<td>
+							<span th:if="${account != null}" th:text="${account.name}"></span>
+							<form method="get" th:action="@{/mypage/editAccount}" class="d-inline-block ms-2">
+								<button type="submit" class="btn btn-sm btn-outline-secondary">変更</button>
+							</form>
+						</td>
+					</tr>
+					<tr>
+						<th>電話番号</th>
+						<td>
+							<span th:if="${account != null}" th:text="${account.tel}"></span>
+							<form method="get" th:action="@{/mypage/editAccount}" class="d-inline-block ms-2">
+								<button type="submit" class="btn btn-sm btn-outline-secondary">変更</button>
+							</form>
+						</td>
+					</tr>
+					<tr>
+						<th>Email</th>
+						<td>
+							<span th:if="${account != null}" th:text="${account.email}"></span>
+							<form method="get" th:action="@{/mypage/editEmail}" class="d-inline-block ms-2">
+								<button type="submit" class="btn btn-sm btn-outline-secondary">変更</button>
+							</form>
+						</td>
+					</tr>
+				</table>
+
+				<div class="text-end mb-4">
+					<a th:href="@{/mypage/editPassword}" class="btn btn-link">パスワード変更はこちら</a>
+				</div>
+
+				<h3 class="mb-3">登録住所</h3>
+
+				<div th:if="${addressList != null and !addressList.isEmpty()}">
+					<table class="table table-bordered">
+						<thead class="table-light">
+							<tr>
+								<th>郵便番号</th>
+								<th>都道府県ID</th>
+								<th>住所</th>
+								<th>建物名</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="addr : ${addressList}">
+								<td th:text="'〒' + ${addr.postalCode}"></td>
+								<td th:text="${addr.prefectureId}"></td>
+								<td th:text="${addr.street}"></td>
+								<td th:text="${addr.building}"></td>
+								<td>
+									<form method="get" th:action="@{/mypage/editAddress/{addressId}(addressId=${addr.id})}"
+										class="d-inline-block me-1">
+										<button type="submit" class="btn btn-sm btn-outline-secondary">変更</button>
+									</form>
+									<form method="post"
+										th:action="@{/mypage/deleteAddress/{addressId}(addressId=${addr.id})}"
+										class="d-inline-block" onsubmit="return confirm('この住所を削除しますか？');">
+										<button type="submit" class="btn btn-sm btn-outline-danger">削除</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div th:unless="${addressList != null and !addressList.isEmpty()}" class="text-muted mb-3">
+					<p>登録された住所がありません。</p>
+				</div>
+
+				<form method="get" th:action="@{/mypage/addAddress}" class="mb-4">
+					<button type="submit" class="btn btn-primary">新しい住所を登録</button>
+				</form>
+
+				<h3 class="mb-3">購入履歴</h3>
+
+				<div th:if="${orderHistory != null and !orderHistory.isEmpty()}">
+					<table class="table table-bordered">
+						<thead class="table-light">
+							<tr>
+								<th>注文番号</th>
+								<th>注文日</th>
+								<th>合計金額</th>
+								<th>支払い方法</th>
+								<th>詳細情報</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="order : ${orderHistory}">
+								<td th:text="${order.id}"></td>
+								<td th:text="${order.orderedOn}"></td>
+								<td th:text="${order.totalPrice} + '円'"></td>
+								<td>クレジットカード</td>
+								<td>
+									<form method="get" th:action="@{/mypage/orderDetail/{orderId}(orderId=${order.id})}"
+										class="d-inline-block">
+										<button type="submit" class="btn btn-sm btn-outline-info">詳細情報</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<div th:unless="${orderHistory != null and !orderHistory.isEmpty()}" class="text-muted mb-3">
+					<p>購入履歴がありません。</p>
+				</div>
+
+				<h3 class="mb-3">クレジットカード</h3>
+
+				<div th:if="${creditCards != null and !creditCards.isEmpty()}" class="mb-3">
+					<div th:each="creditCard : ${creditCards}" class="border rounded p-3 mb-2 bg-light">
+						<div class="d-flex justify-content-between align-items-center">
+							<div>
+								<strong>カード番号: **** **** **** <span th:text="${#strings.substring(creditCard.number, 12)}"></span></strong><br>
+								<small class="text-muted">名義: <span th:text="${creditCard.name}"></span></small>
+							</div>
+							<form method="post" th:action="@{/mypage/deleteCreditCard/{cardId}(cardId=${creditCard.id})}"
+								class="d-inline-block" onsubmit="return confirm('このカード情報を削除しますか？');">
+								<button type="submit" class="btn btn-sm btn-outline-danger">削除</button>
+							</form>
+						</div>
+					</div>
+				</div>
+
+				<div th:unless="${creditCards != null and !creditCards.isEmpty()}" class="text-muted mb-3">
+					<p>登録されたクレジットカード情報がありません。</p>
+				</div>
+
+				<form method="get" th:action="@{/mypage/addCreditCard}" class="mb-4">
+					<button type="submit" class="btn btn-primary">新しいクレジットカードを登録</button>
+				</form>
+
+				<div class="border-top pt-3 mt-4">
+					<a th:href="@{/mypage/deleteAccount}" class="btn btn-outline-danger btn-sm">アカウントを削除する</a>
+				</div>
+
+			</div>
+		</div>
+	</main>
 
 </body>
 

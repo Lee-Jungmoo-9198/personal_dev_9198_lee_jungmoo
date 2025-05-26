@@ -1,0 +1,65 @@
+body {
+	padding-top: 20px;
+	background-color: #f8f9fa;
+}
+
+.container {
+	max-width: 600px;
+	margin: 0 auto;
+	background-color: #fff;
+	padding: 30px;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+table {
+	width: 100%;
+	margin-bottom: 20px;
+}
+
+th,
+td {
+	padding: 10px;
+	vertical-align: top;
+}
+
+th {
+	width: 30%;
+	text-align: right;
+}
+
+td input[type="text"],
+td input[type="number"],
+td textarea,
+td select {
+	/* select 요소 스타일 추가 */
+	width: 100%;
+	padding: .375rem .75rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	border: 1px solid #ced4da;
+	border-radius: .25rem;
+}
+
+td textarea {
+	min-height: 100px;
+	
+}
+
+.form-group {
+	margin-bottom: 1rem;
+}
+
+.btn-primary {
+	display: block;
+	width: 100%;
+	padding: .375rem .75rem;
+	font-size: 1rem;
+	line-height: 1.5;
+	border-radius: .25rem;
+}

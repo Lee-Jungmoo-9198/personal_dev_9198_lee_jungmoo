@@ -1,10 +1,108 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+<html lang="ja">
 
+<head>
+	<meta charset="UTF-8">
+	<title>Daily PicK(管理用) - カテゴリー</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/adminStyle.css">
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f4f4f4;
+			margin: 0;
+			padding: 20px;
+		}
+
+		h1 {
+			text-align: center;
+			color: #333;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 20px 0;
+			background-color: #fff;
+		}
+
+		th,
+		td {
+			padding: 10px;
+			text-align: center;
+			border: 1px solid #ddd;
+		}
+
+		th {
+			background-color: #f2f2f2;
+			color: #333;
+		}
+
+		button {
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			padding: 10px 15px;
+			cursor: pointer;
+			border-radius: 5px;
+			transition: background-color 0.3s;
+		}
+
+		button:hover {
+			background-color: #45a049;
+		}
+
+		a {
+			text-decoration: none;
+			color: #fff;
+		}
+
+		.add-category {
+			display: block;
+			width: 200px;
+			margin: 20px auto;
+			text-align: center;
+			background-color: #007BFF;
+			padding: 10px;
+			border-radius: 5px;
+		}
+
+		.add-category:hover {
+			background-color: #0056b3;
+		}
+	</style>
+</head>
+
+<body>
+	<header th:replace="admin/adminheader"></header>
+	<h1>カテゴリー</h1>
+
+	<table>
+		<tr>
+			<th>カテゴリーID</th>
+			<th>カテゴリー名</th>
+			<th>更新</th>
+			<th>削除</th>
+		</tr>
+		<tr th:each="category:${categoryList}">
+			<td>[[${category.id}]]</td>
+			<td>[[${category.name}]]</td>
+			<td>
+				<a th:href="|/admin/category/${category.id}/edit|">
+					<button>更新</button>
+				</a>
+			</td>
+			<td>
+				<form th:action="|/admin/category/${category.id}/delete|" method="post">
+					<button>削除</button>
+				</form>
+			</td>
+		</tr>
+	</table>
+	<a href="/admin/categories/add" class="add-category">カテゴリー追加</a>
 </body>
+
 </html>

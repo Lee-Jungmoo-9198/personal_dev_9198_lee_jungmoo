@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>Daily PicK - 住所編集</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+</head>
+
+<body class="bg-light">
+
+	<header th:replace="header"></header>
+
+	<main>
+		<div class="container mt-4">
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					<div class="card">
+						<div class="card-header">
+							<h3 class="mb-0">住所編集</h3>
+						</div>
+						<div class="card-body">
+							<form th:action="@{/mypage/updateAddress/{addressId}(addressId=${address.id})}" method="post">
+								<div class="mb-3">
+									<label for="name" class="form-label fw-bold">名前</label>
+									<input type="text" class="form-control" id="name" name="name" required 
+										   th:value="${address.name}" placeholder="名前を入力してください">
+								</div>
+								<div class="mb-3">
+									<label for="postal_code" class="form-label fw-bold">郵便番号</label>
+									<input type="text" class="form-control" id="postal_code" name="postal_code" required
+										   th:value="${address.postalCode}" placeholder="例: 123-4567">
+								</div>
+								<div class="mb-3">
+									<label for="prefecture_id" class="form-label fw-bold">都道府県</label>
+									<select class="form-select" id="prefecture_id" name="prefecture_id" required>
+										<option value="">選択してください</option>
+										<option th:each="prefecture : ${prefecturesList}" th:value="${prefecture.id}"
+												th:text="${prefecture.name}" th:selected="${prefecture.id == address.prefectureId}">
+											都道府県名
+										</option>
+									</select>
+								</div>
+								<div class="mb-3">
+									<label for="street" class="form-label fw-bold">住所</label>
+									<input type="text" class="form-control" id="street" name="street" required 
+										   th:value="${address.street}" placeholder="市区町村・番地を入力してください">
+								</div>
+								<div class="mb-3">
+									<label for="building" class="form-label fw-bold">建物名</label>
+									<input type="text" class="form-control" id="building" name="building" 
+										   th:value="${address.building}" placeholder="マンション名・部屋番号など（任意）">
+								</div>
+								<div class="text-center">
+									<button type="submit" class="btn btn-dark me-2">更新</button>
+									<a th:href="@{/mypage}" class="btn btn-secondary">キャンセル</a>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+</body>
+
+</html>

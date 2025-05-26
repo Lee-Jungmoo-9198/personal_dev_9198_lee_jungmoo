@@ -25,8 +25,8 @@ public class AccountController {
 	@Autowired
 	HttpSession session;
 
-	@Autowired(required = false)
-	AccountS accountS;
+	
+    private AccountS accountS;
 
 	@Autowired
 	AccountRepository accountRepository;
@@ -39,7 +39,10 @@ public class AccountController {
 			@RequestParam(name = "error", defaultValue = "") String error,
 			Model model) {
 
-		//セッションを全部消す
+		// 기존 세션 정리
+		if (accountS != null) {
+			accountS.logout();
+		}
 		session.invalidate();
 		
 		return "login";
@@ -47,42 +50,43 @@ public class AccountController {
 
 	@PostMapping("login")
 	public String login(
-			@RequestParam(name = "email") String email,
-			@RequestParam(name = "password") String password,
-			Model model) {
+	        @RequestParam(name = "email") String email,
+	        @RequestParam(name = "password") String password,
+	        Model model) {
 
-		List<String> errors = new ArrayList<>();
+	    List<String> errors = new ArrayList<>();
 
-		Optional<Account> accountOpt = accountRepository.findByEmail(email);
-		if (accountOpt.isPresent()) {
-			Account customer = accountOpt.get();
+	    Optional<Account> accountOpt = accountRepository.findByEmail(email);
+	    if (accountOpt.isPresent()) {
+	        Account customer = accountOpt.get();
 
-			if (customer.getPassword().equals(password)) {
-				
-				if (accountS == null) {
-					accountS = new AccountS();
-				}
-				
-				accountS.setAccountId(customer.getAccountId());
-				accountS.setName(customer.getName());
-				accountS.setAccountType(customer.getType());
-				accountS.setEmail(customer.getEmail());
-				accountS.setTel(customer.getTel());
-				accountS.setLoggedIn(true);
-				
-				
-				session.setAttribute("accountS", accountS);
+	        if (customer.getPassword().equals(password)) {
+	            
+	            
+	            accountS = new AccountS();
+	            Integer customerId = customer.getId();
+	            accountS.setId(customerId);
+	            accountS.setName(customer.getName());
+	            accountS.setType(customer.getType());
+	            accountS.setEmail(customer.getEmail());
+	            accountS.setLoggedIn(true);
+	            
+	            
+	            session.setAttribute("accountS", accountS);
+	            session.setAttribute("accountId", customerId);
+	            
+	            System.out.println("로그인 성공: " + accountS.toString());
+	            
+	            return "redirect:/items";
+	        } else {
+	            errors.add("e-mailアドレスとパスワードが一致しませんでした");
+	        }
+	    } else {
+	        errors.add("e-mailアドレスとパスワードが一致しません");
+	    }
 
-				return "redirect:/items";
-			} else {
-				errors.add("e-mailアドレスとパスワードが一致しませんでした");
-			}
-		} else {
-			errors.add("e-mailアドレスとパスワードが一致しません");
-		}
-
-		model.addAttribute("errors", errors);
-		return "login";
+	    model.addAttribute("errors", errors);
+	    return "login";
 	}
 
 	@GetMapping("/account/add")
@@ -144,6 +148,10 @@ public class AccountController {
 			model.addAttribute("prefectureId", prefectureId);
 			model.addAttribute("street", street);
 			model.addAttribute("building", building);
+			
+			
+			List<Prefectures> prefecturesList = prefecturesRepository.findAll();
+			model.addAttribute("prefecturesList", prefecturesList);
 
 			return "addAccount";
 		}
@@ -159,4 +167,6 @@ public class AccountController {
 
 		return "redirect:/login?registerSuccess";
 	}
+	
+	
 }

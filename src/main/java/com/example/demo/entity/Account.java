@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,28 +15,15 @@ public class Account {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	@Column(name = "account_id")
-	private Integer accountId;
-	@Column(name = "address_id")
-	private Integer addressId;
 	private String name;
 	private String tel;
-
-	public Integer getAddressId() {
-		return addressId;
-	}
-
-	public void setAddressId(Integer addressId) {
-		this.addressId = addressId;
-	}
-
 	private String email;
 	private String password;
-	private Integer type;
+	private Integer type = 0;
 	@Column(name = "create_date")
-	private Timestamp createDate;
+	private LocalDateTime createDate;
 	@Column(name = "update_date")
-	private Timestamp updateDate;
+	private LocalDateTime updateDate;
 	@Column(name = "create_id")
 	private Integer createId;
 	@Column(name = "update_id")
@@ -45,21 +32,9 @@ public class Account {
 	private Character deleteFlg;
 
 	public Account() {
-		// デフォルトで削除フラグを'0'（削除されていない）に設定
-		this.deleteFlg = '0';
-		// デフォルトでユーザータイプを1（一般ユーザー）に設定
-		this.type = 1;
 	}
 
-	public Account(String name, String tel, String email) {
-		this.name = name;
-		this.tel = tel;
-		this.email = email;
-	}
-
-	public Account(Integer accountId, String name, String tel, String email, String password, Integer type,
-			Character deleteFlg) {
-		this.accountId = accountId;
+	public Account(String name, String tel, String email, String password, Integer type, Character deleteFlg) {
 		this.name = name;
 		this.tel = tel;
 		this.email = email;
@@ -68,8 +43,19 @@ public class Account {
 		this.deleteFlg = deleteFlg;
 	}
 
+	//ゲスト追加用のコンストラクタ
+	public Account(String name, String tel, String email) {
+		this.name = name;
+		this.tel = tel;
+		this.email = email;
+	}
+
 	public Integer getId() {
 		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -112,19 +98,19 @@ public class Account {
 		this.type = type;
 	}
 
-	public Timestamp getCreateDate() {
+	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(Timestamp createDate) {
+	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
 	}
 
-	public Timestamp getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Timestamp updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 
@@ -134,15 +120,6 @@ public class Account {
 
 	public void setCreateId(Integer createId) {
 		this.createId = createId;
-	}
-
-	public Integer getAccountId() {
-		// accountIdが未設定の場合は、idを返す
-		return accountId != null ? accountId : id;
-	}
-
-	public void setAccountId(Integer accountId) {
-		this.accountId = accountId;
 	}
 
 	public Integer getUpdateId() {

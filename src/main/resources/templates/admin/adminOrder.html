@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily PicK(管理用)</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/adminStyle.css">
+</head>
+<body>
+    <header th:replace="admin/adminheader"></header>
+
+    <div class="container">
+        <h2>注文一覧</h2>
+        <div th:if="${orderHistory != null and !orderHistory.isEmpty()}">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>注文番号</th>
+                        <th>メールアドレス</th> 
+                        <th>注文日</th>
+                        <th>合計金額</th>
+                        <th>支払い方法</th>
+                        <th>詳細情報</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orderHistory}">
+                        <td th:text="${order.id}"></td>
+                        <td th:text="${accountEmails.get(order.accountsId)}">example@example.com</td>
+                        <td th:text="${order.orderedOn}"></td>
+                        <td th:text="${order.totalPrice}"></td>
+                        <td th:text="${order.creditCardId != null ? 'クレジットカード' : '不明'}">クレジットカード</td>
+                        <td>
+                            <form method="get" th:action="@{/admin/orders/{orderId}(orderId=${order.id})}" class="d-inline-block">
+                                <button type="submit" class="btn btn-sm btn-info">詳細情報</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:if="${orderHistory == null or orderHistory.isEmpty()}">
+            <p>注文履歴がありません。</p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

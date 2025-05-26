@@ -1,91 +1,98 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<title>Daily PicK - 新規登録</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="/css/style.css">
-	<title>サンプルショッピング</title>
 </head>
 
-<body>
-	<div class="container">
-		<h1 class="text-center">サンプルショッピング</h1>
-		<div class="register-box mx-auto">
-			<h2 class="text-center">新規登録</h2>
+<body class="bg-light">
 
-			
-			<div th:if="${errors != null}">
-				<div class="alert alert-danger">
-					<ul>
-						<li th:each="error : ${errors}" th:text="${error}"></li>
-					</ul>
+	<main>
+		<div class="container mt-4">
+			<div class="row justify-content-center">
+				<div class="col-md-8">
+					<div class="text-center mb-4">
+						<h1 class="h3">サンプルショッピング</h1>
+					</div>
+					<div class="card">
+						<div class="card-header">
+							<h3 class="mb-0">新規登録</h3>
+						</div>
+						<div class="card-body">
+							<div th:if="${errors != null}" class="alert alert-danger">
+								<ul class="mb-0">
+									<li th:each="error : ${errors}" th:text="${error}"></li>
+								</ul>
+							</div>
+
+							<form action="/account/add" method="post">
+								<div class="mb-3">
+									<label for="name" class="form-label fw-bold">名前</label>
+									<input type="text" class="form-control" id="name" name="name" th:value="${name}"
+										   placeholder="名前を入力してください">
+								</div>
+								<div class="mb-3">
+									<label for="tel" class="form-label fw-bold">電話番号</label>
+									<input type="text" class="form-control" id="tel" name="tel" th:value="${tel}"
+										   placeholder="電話番号を入力してください">
+								</div>
+								<div class="mb-3">
+									<label for="postal_code" class="form-label fw-bold">〒 郵便番号</label>
+									<input type="text" class="form-control" id="postal_code" name="postal_code" th:value="${postalCode}"
+										   placeholder="例: 123-4567">
+								</div>
+								<div class="mb-3">
+									<label for="prefecture_id" class="form-label fw-bold">都道府県</label>
+									<select class="form-select" id="prefecture_id" name="prefecture_id" th:value="${prefectureId}">
+										<option value="">選択してください</option>
+										<option th:each="prefecture : ${prefecturesList}" th:value="${prefecture.id}"
+												th:text="${prefecture.name}" th:selected="${prefecture.id == prefectureId}">
+									</select>
+								</div>
+								<div class="mb-3">
+									<label for="street" class="form-label fw-bold">市町村・番地</label>
+									<input type="text" class="form-control" id="street" name="street" th:value="${street}"
+										   placeholder="市町村・番地を入力してください">
+								</div>
+								<div class="mb-3">
+									<label for="building" class="form-label fw-bold">建物名・部屋番号</label>
+									<input type="text" class="form-control" id="building" name="building" th:value="${building}"
+										   placeholder="建物名・部屋番号を入力してください（任意）">
+								</div>
+								<div class="mb-3">
+									<label for="email" class="form-label fw-bold">e-mail</label>
+									<input type="email" class="form-control" id="email" name="email" th:value="${email}"
+										   placeholder="メールアドレスを入力してください">
+								</div>
+								<div class="mb-3">
+									<label for="ckEmail" class="form-label fw-bold">e-mail（確認用）</label>
+									<input type="email" class="form-control" id="ckEmail" name="ckEmail" th:value="${ckEmail}"
+										   placeholder="確認用メールアドレスを再入力してください">
+								</div>
+								<div class="mb-3">
+									<label for="password" class="form-label fw-bold">パスワード</label>
+									<input type="password" class="form-control" id="password" name="password"
+										   placeholder="パスワードを入力してください">
+								</div>
+								<div class="mb-3">
+									<label for="ckPassword" class="form-label fw-bold">パスワード（確認用）</label>
+									<input type="password" class="form-control" id="ckPassword" name="ckPassword" 
+										   placeholder="確認用パスワードを再入力してください">
+								</div>
+								<div class="text-center">
+									<button type="submit" class="btn btn-dark">登録</button>
+								</div>
+							</form>
+						</div>
+					</div>
 				</div>
 			</div>
-
-
-			<form action="/account/add" method="post">
-				<div class="form-group">
-					<label for="name">名前</label>
-					<input type="text" class="form-control" id="name" name="name" th:value="${name}"
-						placeholder="名前を入力してください">
-				</div>
-				<div class="form-group">
-					<label for="tel">電話番号</label>
-					<input type="text" class="form-control" id="tel" name="tel" th:value="${tel}"
-						placeholder="電話番号を入力してください">
-				</div>
-				<div class="form-group">
-					<label for="postal_code">〒 郵便番号</label>
-					<input type="text" class="form-control" id="postal_code" name="postal_code" th:value="${postalCode}"
-						placeholder="郵便番号を入力してください">
-				</div>
-				<div class="form-group">
-					<label for="prefecture_id">都道府県</label>
-					<select class="form-control" id="prefecture_id" name="prefecture_id" th:value="${prefectureId}">
-						<option value="">選択</option>
-						<option th:each="prefecture : ${prefecturesList}" th:value="${prefecture.id}"
-							th:text="${prefecture.name}" th:selected="${prefecture.id == prefectureId}">
-
-					</select>
-				</div>
-				<div class="form-group">
-					<label for="street">市町村・番地</label>
-					<input type="text" class="form-control" id="street" name="street" th:value="${street}"
-						placeholder="市町村・番地を入力してください">
-				</div>
-				<div class="form-group">
-					<label for="building">建物名・部屋番号</label>
-					<input type="text" class="form-control" id="building" name="building" th:value="${building}"
-						placeholder="建物名・部屋番号を入力してください">
-				</div>
-				<div class="form-group">
-					<label for="email">e-mail</label>
-					<input type="email" class="form-control" id="email" name="email" th:value="${email}"
-						placeholder="メールアドレスを入力してください">
-				</div>
-				<div class="form-group">
-					<label for="ckEmail">e-mail（確認用）</label>
-					<input type="email" class="form-control" id="ckEmail" name="ckEmail" th:value="${ckEmail}"
-						placeholder="確認用の再入力">
-				</div>
-				<div class="form-group">
-					<label for="password">パスワード</label>
-					<input type="password" class="form-control" id="password" name="password"
-						placeholder="パスワードを入力してください">
-				</div>
-				<div class="form-group">
-					<label for="ckPassword">パスワード（確認用）</label>
-					<input type="password" class="form-control" id="ckPassword" name="ckPassword" placeholder="確認用の再入力">
-				</div>
-				<button type="submit" class="btn btn-primary btn-block">登録</button>
-			</form>
 		</div>
-	</div>
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+	</main>
+
 </body>
 
 </html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<title>Daily PicK - 決済方法選択</title>
+</head>
+
+<body>
+	<header th:replace="header"></header>
+	<div class="container">
+
+		<div class="payment-box mx-auto">
+			<h2 class="text-center">お支払い方法</h2>
+			<form th:action="@{/order/info}" method="post" id="paymentForm">
+				<input type="hidden" name="name" th:value="${form.name}" />
+				<input type="hidden" name="postalCode" th:value="${form.postalCode}" />
+				<input type="hidden" name="prefectureId" th:value="${form.prefectureId}" />
+				<input type="hidden" name="street" th:value="${form.street}" />
+				<input type="hidden" name="building" th:value="${form.building}" />
+				<input type="hidden" name="tel" th:value="${form.tel}" />
+				<input type="hidden" name="email" th:value="${form.email}" />
+
+				<input type="hidden" name="accountId" th:value="${accountId}" />
+				<input type="hidden" name="addressId" th:value="${addressId}" />
+				<input type="hidden" name="isLoggedIn" th:value="${isLoggedIn}" />
+
+				<input type="hidden" name="button" value="1">
+
+				<input type="hidden" name="selectedCreditCardId" id="selectedCreditCardId" value="">
+
+				<div class="form-group">
+					<label>お支払い方法<span class="text-danger">*</span></label><br>
+					<div class="form-check">
+						<input class="form-check-input payment-method-radio" type="radio" name="type"
+							id="paymentMethod1" value="1" checked> <label class="form-check-label"
+							for="paymentMethod1">代金引換</label>
+					</div>
+
+					<div th:each="card : ${registeredCreditCards}">
+						<div class="form-check">
+							<input class="form-check-input payment-method-radio" type="radio" name="type"
+								th:id="'paymentMethod_card_' + ${card.id}" value="2" th:data-card-id="${card.id}"
+								th:checked="${selectedCreditCardId != null and selectedCreditCardId == card.id}">
+							<label class="form-check-label" th:for="'paymentMethod_card_' + ${card.id}">
+								クレジットカード (登録済み: **** **** **** <span
+									th:text="${#strings.substring(card.number, #strings.length(card.number) - 4)}">0000</span>)
+							</label>
+						</div>
+					</div>
+
+					<div class="form-check">
+						<input class="form-check-input payment-method-radio" type="radio" name="type"
+							id="paymentMethodNewCard" value="2"> <label class="form-check-label"
+							for="paymentMethodNewCard">
+							新しいカードで支払う</label>
+					</div>
+				</div>
+
+				<div id="creditCardDetails" style="display: none;">
+					<div class="form-group">
+						<label for="number">クレジットカード番号<span class="text-danger">*</span></label>
+						<input type="text" class="form-control" id="number" name="number" placeholder="カード番号を入力してください"
+							maxlength="16" pattern="\d{13,16}">
+						<small class="form-text text-muted">13〜16桁の数字を入力してください</small>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label for="mm">有効期限 (月)<span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="mm" name="mm" placeholder="MM" maxlength="2"
+								pattern="\d{1,2}">
+							<small class="form-text text-muted">1〜12の数字</small>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="yy">有効期限 (年)<span class="text-danger">*</span></label>
+							<input type="text" class="form-control" id="yy" name="yy" placeholder="YY" maxlength="2"
+								pattern="\d{2}">
+							<small class="form-text text-muted">下2桁の年</small>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="cvc">セキュリティコード<span class="text-danger">*</span></label>
+						<input type="text" class="form-control" id="cvc" name="cvc" placeholder="セキュリティコードを入力してください"
+							maxlength="4" pattern="\d{3,4}">
+						<small class="form-text text-muted">カード裏面の3〜4桁の数字</small>
+					</div>
+					<div class="form-group">
+						<label for="cardName">カード名義(英字)<span class="text-danger">*</span></label>
+						<input type="text" class="form-control" id="cardName" name="cardName" placeholder="名前を入力してください">
+						<small class="form-text text-muted">例: TARO YAMADA</small>
+					</div>
+				</div>
+
+				<div class="text-center mt-4">
+					<a th:href="@{/order}" class="btn btn-secondary">情報入力へ戻る</a>
+					<button type="submit" class="btn btn-primary">確認画面へ</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const paymentMethodRadios = document.querySelectorAll('input[name="type"]');
+			const creditCardDetailsDiv = document.getElementById('creditCardDetails');
+			const paymentForm = document.getElementById('paymentForm');
+
+			// 선택된 신용카드 ID를 담을 단일 hidden input
+			const selectedCreditCardIdInput = document.getElementById('selectedCreditCardId');
+
+			const cardNumberInput = document.getElementById('number');
+			const expirationMmInput = document.getElementById('mm');
+			const expirationYyInput = document.getElementById('yy');
+			const cvcInput = document.getElementById('cvc');
+			const nameInput = document.getElementById('cardName');
+
+			// 신용카드 입력 필드들의 required 및 disabled 속성을 토글하는 함수
+			function toggleCardInputState(disable) {
+				if (cardNumberInput) { // 해당 input 요소들이 존재하는지 확인
+					cardNumberInput.disabled = disable;
+					expirationMmInput.disabled = disable;
+					expirationYyInput.disabled = disable;
+					cvcInput.disabled = disable;
+					nameInput.disabled = disable;
+
+					// disabled 상태일 때는 required 속성도 false로 설정 (HTML5 유효성 검사에서 제외)
+					// disabled가 false일 때만 required를 true로 설정
+					cardNumberInput.required = !disable;
+					expirationMmInput.required = !disable;
+					expirationYyInput.required = !disable;
+					cvcInput.required = !disable;
+					nameInput.required = !disable;
+				}
+			}
+
+			// 폼 상태를 업데이트하는 함수 (가시성, 필드 활성화/비활성화, selectedCreditCardId 설정)
+			function updateFormState() {
+				const selectedRadio = document.querySelector('input[name="type"]:checked');
+				if (!selectedRadio) return;
+
+				const selectedValue = selectedRadio.value; // '1' (대금인환) 또는 '2' (신용카드)
+				const selectedId = selectedRadio.id; // 선택된 라디오 버튼의 ID
+
+				// 1. selectedCreditCardId hidden input 초기화
+				selectedCreditCardIdInput.value = '';
+
+				// 2. 새로운 카드 정보 입력 필드 영역 및 필드들의 상태 초기화 (숨김 및 비활성화)
+				creditCardDetailsDiv.style.display = 'none';
+				toggleCardInputState(true); // 모든 새로운 카드 필드를 일단 비활성화
+
+				if (selectedValue === '2') { // 신용카드 결제 선택 시
+					if (selectedId === 'paymentMethodNewCard') { // '新しいカードで支払う' (새로운 카드) 선택 시
+						creditCardDetailsDiv.style.display = 'block'; // 새로운 카드 입력 영역 표시
+						toggleCardInputState(false); // 새로운 카드 필드 활성화
+					} else if (selectedId.startsWith('paymentMethod_card_')) { // 등록된 카드 선택 시
+						// 선택된 등록 카드의 ID를 data-card-id 속성에서 가져와서 hidden input에 설정
+						const cardId = selectedRadio.dataset.cardId;
+						selectedCreditCardIdInput.value = cardId;
+						console.log('Selected registered card ID set to: ' + cardId);
+					}
+				}
+				// '1' (代金引換) 선택 시에는 creditCardDetailsDiv가 display: none이고, 필드들이 disabled 상태 유지
+			}
+
+			// 페이지 로드 시 초기 상태 설정
+			updateFormState();
+
+			// 모든 결제 방법 라디오 버튼에 change 이벤트 리스너 추가
+			paymentMethodRadios.forEach(function (radio) {
+				radio.addEventListener('change', updateFormState);
+			});
+
+			// 폼 제출 전 유효성 검사 (클라이언트 측)
+			paymentForm.addEventListener('submit', function (event) {
+				const selectedRadio = document.querySelector('input[name="type"]:checked');
+
+				if (!selectedRadio) {
+					alert('お支払い方法を選択してください。');
+					event.preventDefault();
+					return;
+				}
+
+				const selectedId = selectedRadio.id;
+
+				if (selectedId === 'paymentMethodNewCard') { // 새로운 카드 선택 시에만 유효성 검사
+					// cardNumberInput.disabled가 false인 경우 (즉, 활성화된 경우)에만 검사
+					if (cardNumberInput.disabled === false) {
+						// 카드 번호 유효성 검사 (기본 패턴)
+						if (!cardNumberInput.value.match(/^\d{13,16}$/)) {
+							alert('クレジットカード番号が正しくありません。');
+							event.preventDefault();
+							return;
+						}
+
+						// 유효 기간 (월) 유효성 검사
+						const mm = parseInt(expirationMmInput.value, 10);
+						if (isNaN(mm) || mm < 1 || mm > 12) {
+							alert('有効期限(月)が正しくありません。');
+							event.preventDefault();
+							return;
+						}
+
+						// 유효 기간 (년) 유효성 검사
+						if (!expirationYyInput.value.match(/^\d{2}$/)) {
+							alert('有効期限(年)が正しくありません。');
+							event.preventDefault();
+							return;
+						}
+
+						// CVC 유효성 검사
+						if (!cvcInput.value.match(/^\d{3,4}$/)) {
+							alert('セキュリティコードが正しくありません。');
+							event.preventDefault();
+							return;
+						}
+
+						// 카드 명의 유효성 검사
+						if (!nameInput.value.trim()) {
+							alert('カード名義を入力してください。');
+							event.preventDefault();
+							return;
+						}
+					}
+				}
+			});
+
+			// 입력 필드 유효성 검사 (실시간 입력 제한)
+			if (cardNumberInput) {
+				cardNumberInput.addEventListener('input', function (e) {this.value = this.value.replace(/\D/g, '');});
+			}
+			if (expirationMmInput) {
+				expirationMmInput.addEventListener('input', function (e) {
+					this.value = this.value.replace(/\D/g, '');
+					const val = parseInt(this.value, 10);
+					if (!isNaN(val) && val > 12) {this.value = '12';}
+				});
+			}
+			if (expirationYyInput) {
+				expirationYyInput.addEventListener('input', function (e) {this.value = this.value.replace(/\D/g, '');});
+			}
+			if (cvcInput) {
+				cvcInput.addEventListener('input', function (e) {this.value = this.value.replace(/\D/g, '');});
+			}
+		});
+	</script>
+</body>
+
+</html>
